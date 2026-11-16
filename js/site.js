@@ -2,35 +2,54 @@
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function setupNav() {
-    const btn = document.querySelector(".nav-toggle");
-    const nav = document.getElementById("site-nav");
-    if (!btn || !nav) return;
+    const root = document.querySelector("[data-protocol]");
+    const btn = document.querySelector(".protocol-toggle");
+    const menu = document.getElementById("protocol-menu");
+    if (!root || !btn || !menu) return;
+
+    function open() {
+      root.classList.add("is-open");
+      btn.setAttribute("aria-expanded", "true");
+      menu.setAttribute("aria-hidden", "false");
+      document.body.classList.add("nav-open");
+    }
 
     function close() {
-      nav.classList.remove("is-open");
+      root.classList.remove("is-open");
       btn.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-hidden", "true");
       document.body.classList.remove("nav-open");
     }
 
-    btn.addEventListener("click", () => {
-      const open = btn.getAttribute("aria-expanded") === "true";
-      if (open) {
-        close();
+    const hoverable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (!hoverable) {
+        if (btn.getAttribute("aria-expanded") === "true") close();
+        else open();
         return;
       }
-      nav.classList.add("is-open");
-      btn.setAttribute("aria-expanded", "true");
-      document.body.classList.add("nav-open");
-      const first = nav.querySelector("a, button");
-      first?.focus();
+      open();
     });
 
-    nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", close));
+    if (hoverable) {
+      let timer = 0;
+      root.addEventListener("mouseenter", () => {
+        window.clearTimeout(timer);
+        open();
+      });
+      root.addEventListener("mouseleave", () => {
+        timer = window.setTimeout(close, 180);
+      });
+    }
+
+    menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", close));
+    document.addEventListener("click", (event) => {
+      if (!root.contains(event.target)) close();
+    });
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") close();
-    });
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 1180) close();
     });
   }
 

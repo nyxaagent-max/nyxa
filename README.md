@@ -22,14 +22,16 @@ The site does not show invented balances, totals, user counts, testimonials, par
 | Whisper | Private send; a relayer pays gas |
 | Eclipse | Private swap inside the pool |
 | Crossing | Private move across Robinhood Chain, Base, Arbitrum, and BNB Chain, with Solana as a destination |
-| Dawn | Recovery from the wallet signature that created a note |
-| Agents | A future CLI and API |
+| Dawn | Recovery from the wallet that created a note |
+| Builders | A future CLI and API for AI agents |
 
 ## Pages
 
-Home, Veil, Whisper, Eclipse, Crossing, Dawn, Agents, How it works, Chains, Docs, FAQ, $NYXA, and `/app/`.
+The header is the logo, a Protocol menu, and Launch App. Protocol lists Veil, Whisper, Eclipse, Crossing, Dawn, Network, Roadmap, Builders, Learn, and $NYXA. Learn links onward to the path, the craft, and questions. `/app/` connects a wallet.
 
-Docs describe the planned architecture only: proofs built in the browser, a relayer, Merkle-tree notes, and a non-custodial design. They are not a specification freeze and not an audit.
+The roadmap is four phases with no dates: website (current), testnet pools and relayer, audit, mainnet.
+
+The craft page describes the planned architecture only: proofs built in the browser, a relayer, Merkle-tree notes, and a non-custodial design. It is not a specification freeze and not an audit.
 
 ## Local preview
 

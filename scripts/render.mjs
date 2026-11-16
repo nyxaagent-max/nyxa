@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = join(import.meta.dirname, "..");
@@ -48,7 +48,11 @@ const ICONS = {
   eclipse: '<circle cx="13" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/>',
   crossing: '<path d="M5 20c6-10 16-10 22 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="20" r="2" fill="currentColor"/><circle cx="26" cy="12" r="2" fill="currentColor"/>',
   dawn: '<path d="M5 22h22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 22a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="1.6"/>',
-  agents: '<rect x="5" y="7" width="22" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 13h8M9 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  builders: '<rect x="5" y="7" width="22" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 13h8M9 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  network: '<circle cx="8" cy="16" r="2.2" fill="currentColor"/><circle cx="24" cy="10" r="2.2" fill="currentColor"/><circle cx="22" cy="23" r="2.2" fill="currentColor"/><path d="M10 15.5l12-4.5M10 17l10 5" stroke="currentColor" stroke-width="1.4"/>',
+  roadmap: '<path d="M8 24V8M8 12h8l2 3-2 3H8M8 20h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  learn: '<path d="M7 12a9 9 0 1 0 9-9 7 7 0 0 1-9 9z" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  token: '<circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 16h6M16 13v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
 };
 
 function icon(name) {
@@ -70,10 +74,23 @@ function illustration(name) {
   return open + (art[name] || art.flow) + close;
 }
 
+const PROTOCOL = [
+  ["/veil.html", "Veil", "veil", "Shield ETH, USDC, or USDG into a private note."],
+  ["/whisper.html", "Whisper", "whisper", "Send to any address. A relayer pays the gas."],
+  ["/eclipse.html", "Eclipse", "eclipse", "Turn one asset into another, inside the pool."],
+  ["/crossing.html", "Crossing", "crossing", "Carry value across chains. Solana is a far shore."],
+  ["/dawn.html", "Dawn", "dawn", "Recover a note from the wallet that made it."],
+  ["/network.html", "Network", "network", "The chains where the night will fall."],
+  ["/roadmap.html", "Roadmap", "roadmap", "Four phases, from this website to mainnet."],
+  ["/builders.html", "Builders", "builders", "A CLI and API for AI agents."],
+  ["/learn.html", "Learn", "learn", "The path, the craft, and the questions."],
+  ["/token.html", "$NYXA", "token", "The mark. The address comes on official channels."],
+];
+
 function header(current) {
-  const links = NAV.map(([href, label]) => {
+  const rows = PROTOCOL.map(([href, label, glyph, text], index) => {
     const on = href === current ? ' aria-current="page"' : "";
-    return `<a class="nav-link" href="${href}"${on}>${label}</a>`;
+    return `<a class="menu-row" href="${href}" style="--i:${index}"${on}>${icon(glyph)}<strong>${label}</strong><em>${text}</em></a>`;
   }).join("");
   const appOn = current === "/app/" ? ' aria-current="page"' : "";
   const homeOn = current === "/" ? ' aria-current="page"' : "";
@@ -83,17 +100,20 @@ function header(current) {
     ${mark("mark-header")}
     <span class="wordmark">Nyxa <em>Network</em></span>
   </a>
-  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-    <span class="sr-only">Menu</span>
-    <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
-  </button>
   <nav id="site-nav" aria-label="Primary">
-    ${links}
-    <a class="btn btn-moon nav-cta" href="/app/"${appOn}>Open app</a>
+    <div class="protocol" data-protocol>
+      <button class="protocol-toggle" type="button" aria-expanded="false" aria-controls="protocol-menu">
+        Protocol <span class="caret" aria-hidden="true"></span>
+      </button>
+      <div id="protocol-menu" class="protocol-menu" aria-hidden="true">
+        ${rows}
+      </div>
+    </div>
+    <a class="btn btn-moon nav-cta" href="/app/"${appOn}>Launch App</a>
   </nav>
   <div class="scroll-progress" aria-hidden="true"></div>
 </header>
-<noscript><p class="noscript-banner">JavaScript is off. You can still read ${BRAND}. Wallet connection and the animated sequence need JavaScript.</p></noscript>`;
+<noscript><p class="noscript-banner">JavaScript is off. The pages still read. The wallet and the moving sequence use JavaScript.</p></noscript>`;
 }
 
 function footer() {
@@ -105,33 +125,31 @@ function footer() {
           ${mark("mark-footer")}
           <span class="wordmark">Nyxa <em>Network</em></span>
         </a>
-        <p class="footer-blurb">Private payments, planned in the open. Nyxa is in development: no contracts deployed, no audit claimed, no token address published.</p>
+        <p class="footer-blurb">Payments that leave the path in shadow.</p>
       </div>
       <div>
-        <h2>Product</h2>
+        <h2>Protocol</h2>
         <ul>
           <li><a href="/veil.html">Veil</a></li>
           <li><a href="/whisper.html">Whisper</a></li>
           <li><a href="/eclipse.html">Eclipse</a></li>
           <li><a href="/crossing.html">Crossing</a></li>
           <li><a href="/dawn.html">Dawn</a></li>
-          <li><a href="/agents.html">Agents</a></li>
-          <li><a href="/app/">App</a></li>
         </ul>
       </div>
       <div>
-        <h2>Learn</h2>
+        <h2>Night</h2>
         <ul>
-          <li><a href="/how-it-works.html">How it works</a></li>
-          <li><a href="/chains.html">Chains</a></li>
-          <li><a href="/docs.html">Docs</a></li>
-          <li><a href="/faq.html">FAQ</a></li>
+          <li><a href="/network.html">Network</a></li>
+          <li><a href="/roadmap.html">Roadmap</a></li>
+          <li><a href="/builders.html">Builders</a></li>
+          <li><a href="/learn.html">Learn</a></li>
           <li><a href="/token.html">$NYXA</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bar">
-      <p>© 2026 Nyxa Network. In development. Contracts are not deployed.</p>
+      <p>© 2026 Nyxa Network. Nyxa Network is in development. Contracts are not yet deployed.</p>
       <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
@@ -180,22 +198,22 @@ function card(href, iconName, kicker, title, text, delay) {
     <span class="card-kicker">${kicker}</span>
     <h3>${title}</h3>
     <p>${text}</p>
-    <span class="more">Read ${title} <i aria-hidden="true">→</i></span>
+    <span class="more">Enter ${title} <i aria-hidden="true">→</i></span>
   </a>`;
 }
 
 function sequence() {
   const steps = [
-    ["Veil", "You would deposit ETH, USDC, or USDG. The browser builds an encrypted note and keeps the spend secret with you. The pool would record a commitment, not your identity."],
-    ["Prove", "The browser prepares a zero-knowledge proof that a note is yours and unspent, without revealing which note. The proving system is not chosen yet. This page does not generate a proof."],
-    ["Relay", "A relayer is planned to submit the proof and pay the network fee, so your own wallet is not the sender. The relayer would see the withdrawal it is asked to broadcast."],
-    ["Arrive", "The recipient address is paid. Observers are meant to see an arrival, not a public link back to the deposit. That is the design goal. It is not a live payment."],
+    ["Veil", "A note is born. ETH, USDC, or USDG, held as a secret only its owner can spend."],
+    ["Prove", "The browser draws a proof of that note, and leaves the name of it unspoken."],
+    ["Relay", "Another hand pays the gas. The chain records that hand, not yours."],
+    ["Arrive", "Value reaches an address. The road back stays dark."],
   ];
   const buttons = steps.map(([name], index) => `<li><button type="button" data-step="${index}"><span class="num">0${index + 1}</span><span class="name">${name}</span></button></li>`).join("");
   const panels = steps.map(([name, text], index) => `<article class="sequence-panel" data-panel="${index}"><h3>${name}</h3><p>${text}</p></article>`).join("");
   return `<div class="sequence" data-flow>
     <div class="sequence-top">
-      <p class="sequence-label">How it works — an illustrative sequence of the planned flow. Not a live transaction, and not your funds.</p>
+      <p class="sequence-label">The path of a payment, from first shadow to arrival.</p>
       <button class="text-btn" type="button" data-flow-toggle>Pause</button>
     </div>
     <div class="sequence-track">
@@ -210,7 +228,7 @@ function home() {
   return `<section class="hero sky" data-starfield>
     <div class="wrap hero-inner">
       <div class="hero-copy">
-        <p class="pill">In development</p>
+        <p class="pill">Testnet soon</p>
         <p class="hero-brand">Nyxa <em>Network</em></p>
         <h1 aria-label="Pay in the dark. Leave no trace.">
           <span class="type-line" aria-hidden="true">
@@ -219,13 +237,12 @@ function home() {
           </span>
           <em class="line-two">Leave no trace.</em>
         </h1>
-        <p class="lede">Named for Nyx, Nyxa is a private payment pool in development. A deposit is planned to become an encrypted note. A later payment is planned to arrive without a public link back to that deposit. Contracts are not deployed. This site cannot move money.</p>
+        <p class="lede">Named for Nyx. A note enters the pool. A payment leaves it. The path between them stays unlit.</p>
         <div class="hero-actions">
-          <a class="btn btn-moon" href="/how-it-works.html">See how it works</a>
-          <a class="btn btn-ghost" href="/app/">Open the app</a>
+          <a class="btn btn-moon" href="/app/">Launch App</a>
+          <a class="btn btn-ghost" href="/how-it-works.html">See the path</a>
         </div>
-        <p class="hero-note">Contracts are not deployed. The app will not move funds.</p>
-        <p class="legend"><span>Planned</span><span>Non-custodial notes</span><span>Proofs in the browser</span><span>A relayer pays gas</span></p>
+        <p class="legend"><span>In the dark</span><span>Notes born in the browser</span><span>A relayer pays gas</span><span>The path stays quiet</span></p>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="moon-wrap">
@@ -233,10 +250,10 @@ function home() {
           <div class="orbit orbit-b"></div>
           <div class="moon"></div>
           <div class="note-card">
-            <span class="note-seal"></span>
+            <span class="note-mark"></span>
             <span class="note-line"></span>
             <span class="note-line short"></span>
-            <span class="note-caption">Diagram · encrypted note</span>
+            <span class="note-caption">A private note</span>
           </div>
         </div>
       </div>
@@ -244,62 +261,45 @@ function home() {
   </section>
   <section class="band band-tight" id="instruments">
     <div class="wrap">
-      <h2 class="indexed" data-index="01">The instruments</h2>
-      <p class="section-lead">Nyxa is one pool with six names. Each name is a page. Each one is still being built.</p>
+      <h2 class="indexed" data-index="01">Five rites</h2>
+      <p class="section-lead">One pool. Five names. Each one a way through the dark.</p>
       <div class="card-grid">
-        ${card("/veil.html", "veil", "Deposit", "Veil", "Shield ETH, USDC, or USDG into the pool as an encrypted note.", 0)}
-        ${card("/whisper.html", "whisper", "Send", "Whisper", "Pay any address in private. A relayer is planned to cover gas so the sender’s wallet does not appear.", 60)}
-        ${card("/eclipse.html", "eclipse", "Swap", "Eclipse", "Trade inside the pool, without the wallet standing in a public market.", 120)}
-        ${card("/crossing.html", "crossing", "Bridge", "Crossing", "Move value across chains in private. Solana is planned as a destination.", 180)}
-        ${card("/dawn.html", "dawn", "Recover", "Dawn", "Reconstruct access to a note from a signature by the wallet that created it.", 240)}
-        ${card("/agents.html", "agents", "Delegate", "Agents", "A CLI and an API are planned so an agent can act under rules its operator sets.", 300)}
+        ${card("/veil.html", "veil", "Shield", "Veil", "ETH, USDC, or USDG, drawn into a note only you can spend.", 0)}
+        ${card("/whisper.html", "whisper", "Murmur", "Whisper", "A payment to any address. A relayer carries the gas.", 60)}
+        ${card("/eclipse.html", "eclipse", "Turn", "Eclipse", "One asset becomes another, inside the pool.", 120)}
+        ${card("/crossing.html", "crossing", "Passage", "Crossing", "Value across chains. Solana waits as a far shore.", 180)}
+        ${card("/dawn.html", "dawn", "Return", "Dawn", "A note remembered by the wallet that made it.", 240)}
+        ${card("/builders.html", "builders", "Makers", "Builders", "A CLI and API, so an AI agent can walk the same path.", 300)}
       </div>
     </div>
   </section>
   <section class="band sky" id="sequence" data-starfield>
     <div class="wrap">
-      <h2 class="indexed" data-index="02">Veil, prove, relay, arrive.</h2>
-      <p class="section-lead">The sequence plays on its own. It is a diagram of the plan.</p>
+      <h2 class="indexed" data-index="02">From veil to arrival</h2>
+      <p class="section-lead">Watch the path a payment takes.</p>
       ${sequence()}
     </div>
   </section>
-  <section class="band" id="planned-chains">
+  <section class="band" id="shores">
     <div class="wrap">
-      <h2 class="indexed" data-index="03">Where it is planned to land</h2>
-      <p class="section-lead">These are the networks in the plan. Nyxa has not deployed contracts on any of them.</p>
+      <h2 class="indexed" data-index="03">Shores</h2>
+      <p class="section-lead">The night is drawn for these chains. The pools join them at testnet.</p>
       <div class="chain-row">
-        <a class="chain-pill" href="/chains.html"><strong>Robinhood Chain</strong><span>Chain id 4663 · ETH gas</span></a>
-        <a class="chain-pill" href="/chains.html"><strong>Base</strong><span>Chain id 8453 · ETH gas</span></a>
-        <a class="chain-pill" href="/chains.html"><strong>Arbitrum</strong><span>Chain id 42161 · ETH gas</span></a>
-        <a class="chain-pill" href="/chains.html"><strong>BNB Chain</strong><span>Chain id 56 · BNB gas</span></a>
-        <a class="chain-pill" href="/chains.html"><strong>Solana</strong><span>Destination only</span></a>
-      </div>
-    </div>
-  </section>
-  <section class="band alt" id="status">
-    <div class="wrap">
-      <div class="fact-card reveal">
-        <div>
-          <h2 class="indexed" data-index="04">What is true today</h2>
-          <p class="section-lead">No invented totals, no invented users, no invented reviews. If it is not built, it is not shown as built.</p>
-        </div>
-        <dl class="facts">
-          <div><dt>Contracts</dt><dd><span class="tag">Not deployed</span></dd></div>
-          <div><dt>Audits</dt><dd><span class="tag">None claimed</span></dd></div>
-          <div><dt>$NYXA contract</dt><dd><span class="tag">Not launched</span> Address announced only on official channels.</dd></div>
-          <div><dt>App actions</dt><dd><span class="tag">Disabled</span> The button reads “Launching soon”.</dd></div>
-          <div><dt>Wallet connection</dt><dd><span class="tag ok">Available</span> Reads your real address, network, and native balance.</dd></div>
-        </dl>
+        <a class="chain-pill" href="/network.html"><strong>Robinhood Chain</strong><span>Chain id 4663 · ETH</span></a>
+        <a class="chain-pill" href="/network.html"><strong>Base</strong><span>Chain id 8453 · ETH</span></a>
+        <a class="chain-pill" href="/network.html"><strong>Arbitrum</strong><span>Chain id 42161 · ETH</span></a>
+        <a class="chain-pill" href="/network.html"><strong>BNB Chain</strong><span>Chain id 56 · BNB</span></a>
+        <a class="chain-pill" href="/network.html"><strong>Solana</strong><span>A far shore</span></a>
       </div>
     </div>
   </section>
   <section class="band sky close-band" data-starfield>
     <div class="wrap">
-      <h2>The app is open. <em>The pool is not.</em></h2>
-      <p class="section-lead">You can connect a wallet and read the real native balance on Robinhood Chain, Base, Arbitrum, or BNB Chain. The buttons that would move money stay disabled.</p>
+      <h2>The next moon <em>is testnet.</em></h2>
+      <p class="section-lead">Bring a wallet. Read what the chain already knows. The rites open when the testnet does.</p>
       <div class="actions">
-        <a class="btn btn-moon" href="/app/">Open the app</a>
-        <a class="btn btn-ghost" href="/docs.html">Read the plan</a>
+        <a class="btn btn-moon" href="/app/">Launch App</a>
+        <a class="btn btn-ghost" href="/roadmap.html">Read the roadmap</a>
       </div>
     </div>
   </section>`;
@@ -310,7 +310,7 @@ function featurePage({ crumb, hash, title, em, lede, art, prose }) {
     <div class="wrap page-hero-grid">
       <div>
         <p class="crumb"><a href="/">Nyxa Network</a> / ${crumb}</p>
-        <p class="pill">In development</p>
+        <p class="pill">Testnet soon</p>
         <h1>${title} <em>${em}</em></h1>
         <p class="lede">${lede}</p>
       </div>
@@ -321,10 +321,9 @@ function featurePage({ crumb, hash, title, em, lede, art, prose }) {
     <div class="wrap prose-grid">
       <div class="prose">${prose}</div>
       <aside class="side-card">
-        <h2>Status</h2>
-        <p><span class="tag">In development</span></p>
-        <p>Contracts are not deployed. You can draft this in the app. The button stays disabled.</p>
-        <p><a class="btn btn-line" href="/app/#${hash}">Open the ${crumb} form</a></p>
+        <h2>In the app</h2>
+        <p>Draft this rite now. It opens with testnet.</p>
+        <p><a class="btn btn-line" href="/app/#${hash}">Launch App</a></p>
       </aside>
     </div>
   </section>`;
@@ -339,104 +338,92 @@ const veil = featurePage({
   hash: "veil",
   title: "Shield a",
   em: "note.",
-  lede: "Veil is the deposit. ETH, USDC, or USDG would enter the pool as an encrypted note that only the holder can spend. Nothing on this page accepts a deposit.",
+  lede: "ETH, USDC, or USDG, drawn into the pool as a note only its holder can spend.",
   art: "veil",
-  prose: `<p>A note is the private record of a deposit: a secret you hold, and a commitment the pool can store without publishing who you are. Spending it later is Whisper, Eclipse, or Crossing. Reconstructing it from the same wallet is Dawn.</p>
-  <h2>The planned gesture</h2>
+  prose: `<p>A note is a secret you keep and a commitment the pool can hold. Whisper spends it. Eclipse turns it. Crossing carries it. Dawn remembers it.</p>
+  <h2>How a note is born</h2>
   ${steps([
-    ["Choose", "Pick the asset and the amount. The planned assets are ETH, USDC, and USDG. No pool balance exists to display."],
-    ["Commit", "The browser would build a secret and a commitment. The secret stays with you. The commitment is what the pool would record."],
-    ["Wait", "Until contracts exist, there is nowhere to submit that commitment. The app lets you fill in the form and then stops."],
+    ["Choose", "An asset and an amount. ETH, USDC, or USDG."],
+    ["Commit", "The browser makes a secret and a commitment. The secret stays with you."],
+    ["Rest", "The commitment is what the pool will remember."],
   ])}
-  <div class="callout"><strong>Diagram, not a receipt.</strong> Nyxa cannot create a note today. Any page or message that offers a deposit address is not this project.</div>
-  <p class="related"><a href="/whisper.html">Whisper</a><a href="/dawn.html">Dawn</a><a href="/how-it-works.html">How it works</a></p>`,
+  <p class="related"><a href="/whisper.html">Whisper</a><a href="/dawn.html">Dawn</a><a href="/how-it-works.html">The path</a></p>`,
 });
 
 const whisper = featurePage({
   crumb: "Whisper",
   hash: "whisper",
-  title: "Send, and stay off",
-  em: "the envelope.",
-  lede: "Whisper is the private payment. A relayer is planned to submit the transaction and pay the gas, so the wallet that funded the note is not the wallet that appears as the sender.",
+  title: "Speak,",
+  em: "and vanish.",
+  lede: "A relayer carries the payment and pays the gas. The chain sees that hand, not the wallet that funded the note.",
   art: "whisper",
-  prose: `<p>You would choose a note and a recipient address. The browser prepares a proof that the note is unspent, without revealing which note. The relayer broadcasts that proof. The recipient is paid.</p>
-  <h2>What is supposed to stay hidden</h2>
-  <p>The public record is designed to show an arrival, not the path back to the deposit. That is a design goal, not a property you can test today. There is no deployment, and Nyxa claims no audit.</p>
-  <h2>What the relayer would see</h2>
-  <p>The relayer sees the withdrawal it is asked to submit, including the destination, because it has to send that transaction. Observers who are not the relayer are who the pool is designed to keep from matching deposit to withdrawal. Amounts can still be compared. Timing can still be compared. A serious write-up of those limits waits until the design is frozen.</p>
+  prose: `<p>Choose a note and an address. The browser prepares a proof that the note is real and unspent, without naming which note. The relayer broadcasts it. The address is paid.</p>
+  <p>The relayer sees the payment it is asked to carry. Everyone else is meant to see an arrival, not the road back to the deposit. Amounts and hours still exist in the open. That is the shape of the dark, not a promise of invisibility.</p>
   ${steps([
-    ["Select", "A note you hold, an asset, and an Ethereum address on the connected network."],
-    ["Prove", "A browser-side proof that the note is real and unspent. The proving system is not chosen yet."],
-    ["Relay", "Someone else pays the gas and is the sender the chain records."],
+    ["Select", "A note, an asset, and an address on the connected network."],
+    ["Prove", "A proof made in the browser. The proving system is still being chosen."],
+    ["Relay", "Gas paid by another hand. That hand is the sender on the chain."],
   ])}
-  <p class="related"><a href="/veil.html">Veil</a><a href="/crossing.html">Crossing</a><a href="/docs.html">Docs</a></p>`,
+  <p class="related"><a href="/veil.html">Veil</a><a href="/crossing.html">Crossing</a><a href="/docs.html">The craft</a></p>`,
 });
 
 const eclipse = featurePage({
   crumb: "Eclipse",
   hash: "eclipse",
-  title: "Swap inside",
-  em: "the dark.",
-  lede: "Eclipse is a private swap between assets held in the pool. The trade is planned to settle without your wallet standing in a public exchange.",
+  title: "Turn inside",
+  em: "the eclipse.",
+  lede: "One asset becomes another inside the pool. The wallet never stands in a public market.",
   art: "eclipse",
-  prose: `<p>The planned assets are ETH, USDC, and USDG. There is no rate, no book, and no liquidity to quote, so this site will not invent one. A chart of prices that do not exist would be a fiction.</p>
-  <h2>What you will not find here</h2>
-  <ul>
-    <li>A quoted price.</li>
-    <li>A filled order.</li>
-    <li>A pool composition.</li>
-  </ul>
-  <p>When a swap is possible, it is planned to consume one note and produce another, still inside the pool, still without naming the depositor. The exact curve and fee are not published because they are not decided.</p>
+  prose: `<p>ETH, USDC, and USDG. A rate appears when liquidity does. Until then, Nyxa shows no price, because there is no price to show.</p>
   ${steps([
-    ["From", "The asset the note currently represents."],
-    ["To", "A different planned asset."],
-    ["Settle", "A new note, still unspent, still yours to whisper, cross, or recover."],
+    ["From", "The asset the note holds now."],
+    ["To", "A different asset in the same night."],
+    ["Again", "A new note. Still yours. Still unspent."],
   ])}
-  <div class="callout"><strong>No market is live.</strong> If someone offers you an Eclipse price in a message, it is not from Nyxa Network.</div>`,
+  <p class="related"><a href="/veil.html">Veil</a><a href="/whisper.html">Whisper</a></p>`,
 });
 
 const crossing = featurePage({
   crumb: "Crossing",
   hash: "crossing",
-  title: "Cross without a",
-  em: "public trail.",
-  lede: "Crossing is planned to move value between Robinhood Chain, Base, Arbitrum, and BNB Chain, and onward to Solana as a destination.",
+  title: "Cross",
+  em: "in silence.",
+  lede: "Value moves among Robinhood Chain, Base, Arbitrum, and BNB Chain, and onward to Solana as a far shore.",
   art: "crossing",
-  prose: `<p>Cross-chain movement adds a hop between networks. The design goal is that the source deposit and the destination payment stay unlinkable on public explorers. The mechanism is not frozen, and nothing is deployed.</p>
-  <p>Nyxa will not ask you to send funds to a personal “bridge address” on this website. There is no deposit address to paste.</p>
-  <h2>Roles, as planned</h2>
+  prose: `<p>The source is an EVM chain where the note was veiled. The destination is one of those chains, or Solana. Solana is not a network the EVM wallet switcher joins.</p>
+  <p>The hope of Crossing is that the shore you left and the shore you reach do not point at each other. The way across is still being drawn.</p>
   <div class="chain-grid">
-    <article class="card chain-card"><h3>Source</h3><p>An EVM network where the note was veiled: Robinhood Chain, Base, Arbitrum, or BNB Chain.</p></article>
-    <article class="card chain-card"><h3>Destination</h3><p>One of those EVM networks, or Solana. Solana is not a network you connect in the EVM wallet switcher.</p></article>
-    <article class="card chain-card"><h3>Status</h3><p>Not connected to Nyxa contracts, because those contracts do not exist yet.</p></article>
+    <article class="card chain-card"><h3>Source</h3><p>Robinhood Chain, Base, Arbitrum, or BNB Chain.</p></article>
+    <article class="card chain-card"><h3>Far shore</h3><p>Those same chains, or Solana.</p></article>
+    <article class="card chain-card"><h3>When</h3><p>With the testnet. See the roadmap.</p></article>
   </div>
-  <p class="related"><a href="/chains.html">Chain details</a><a href="/docs.html">Planned architecture</a></p>`,
+  <p class="related"><a href="/network.html">Network</a><a href="/roadmap.html">Roadmap</a></p>`,
 });
 
 const dawn = featurePage({
   crumb: "Dawn",
   hash: "dawn",
-  title: "Morning, if you can",
-  em: "still sign.",
-  lede: "Dawn is recovery. If you can still sign with the wallet that created a note, Nyxa is being designed so that signature is enough to reconstruct access. Nyxa does not keep the secret.",
+  title: "Morning",
+  em: "remembers.",
+  lede: "Dawn rebuilds a note from the wallet that created it. Nyxa never keeps the secret.",
   art: "dawn",
-  prose: `<p>There is no support desk that can unlock a note for you, because the plan is that Nyxa never holds it. If the design works as intended, losing both the wallet and the secret means nobody — including Nyxa — can recover the note.</p>
-  <p>Treat that as the point of a non-custodial design, and as a reason it has to be reviewed before anyone relies on it. It cannot be reviewed against deployed code today. There is no deployed code, and no audit is claimed.</p>
+  prose: `<p>If that wallet can still speak for you, the note can be found again. If the wallet and the secret are both gone, the note stays in the dark — for you, and for Nyxa.</p>
   ${steps([
-    ["Same wallet", "Dawn is for the key that created the note, not for a stranger who knows an address."],
-    ["A signature", "The planned recovery uses a signature from that wallet. The exact message format is not final."],
-    ["No custody", "Nyxa storing a backup of your secret would break the design. It is not part of the plan."],
+    ["The same wallet", "Dawn answers the key that made the note."],
+    ["A signature", "The message it will sign is still being written."],
+    ["No keeper", "Nyxa does not store a copy. That is the point of the night."],
   ])}
-  <div class="callout"><strong>Not a rescue service.</strong> Do not send a seed phrase to anyone who claims they can restore a Nyxa note. The product is not live, and the plan is that we cannot restore it.</div>`,
+  <div class="callout"><strong>No one here can wake a note for you.</strong> Never hand a seed phrase to a stranger who claims they can.</div>
+  <p class="related"><a href="/veil.html">Veil</a><a href="/learn.html">Learn</a></p>`,
 });
 
-const agents = `<section class="page-hero sky" data-starfield>
+const builders = `<section class="page-hero sky" data-starfield>
   <div class="wrap page-hero-grid">
     <div>
-      <p class="crumb"><a href="/">Nyxa Network</a> / Agents</p>
-      <p class="pill">Planned</p>
-      <h1>A quiet interface <em>for agents.</em></h1>
-      <p class="lede">Nyxa for agents is a planned command-line tool and HTTP API, so software can veil, whisper, swap, and cross under rules a person sets. Nothing is installable today.</p>
+      <p class="crumb"><a href="/">Nyxa Network</a> / Builders</p>
+      <p class="pill">Testnet soon</p>
+      <h1>Tools for <em>the sleepless.</em></h1>
+      <p class="lede">A command line and an API, so an AI agent can veil, whisper, turn, and cross under rules a person sets.</p>
     </div>
     ${illustration("agents")}
   </div>
@@ -444,166 +431,210 @@ const agents = `<section class="page-hero sky" data-starfield>
 <section class="band">
   <div class="wrap prose-grid">
     <div class="prose">
-      <p>There is no package name to install, no base URL to call, and no API key to request. Publishing a command here that looks live would send people to a tool that does not exist.</p>
-      <h2>What the interface is for</h2>
-      <ul>
-        <li>Veil, whisper, eclipse, and crossing, each as an explicit action.</li>
-        <li>A policy the operator controls: which assets, which chains, which size.</li>
-        <li>The same constraint as the app: no action before contracts exist.</li>
-      </ul>
-      <h2>Sketch, not a published interface</h2>
-      <p>The lines below show the shape of a future command. They do not run. There is no binary by this name.</p>
-      <pre class="sketch"><code># Sketch only. These commands are not published and will not run.
+      <p>The interface is still night-quiet. No package. No base URL. No key. When it wakes, it will speak like this.</p>
+      <h2>A shape, not a command you can run</h2>
+      <pre class="sketch"><code># Future shape. These lines do not run today.
 nyxa veil --asset USDC --amount AMOUNT
 nyxa whisper --to ADDRESS --asset USDC --amount AMOUNT</code></pre>
-      <p class="related"><a href="/docs.html">Planned architecture</a><a href="/faq.html">FAQ</a></p>
+      <p class="related"><a href="/learn.html">Learn</a><a href="/roadmap.html">Roadmap</a></p>
     </div>
     <aside class="side-card">
-      <h2>Status</h2>
-      <p><span class="tag">Not published</span></p>
-      <p>No endpoint, no package, no key. The app in the browser is the only interface, and its actions are disabled.</p>
+      <h2>For makers</h2>
+      <p>The same four rites as the app, offered to software. The policy — assets, chains, size — stays with the operator.</p>
     </aside>
+  </div>
+</section>`;
+
+function learnNav(current) {
+  const items = [
+    ["/learn.html", "Learn"],
+    ["/how-it-works.html", "The path"],
+    ["/docs.html", "The craft"],
+    ["/faq.html", "Questions"],
+  ];
+  return `<nav class="subnav" aria-label="Learn">${items.map(([href, label]) => {
+    const on = href === current ? ' aria-current="page"' : "";
+    return `<a href="${href}"${on}>${label}</a>`;
+  }).join("")}</nav>`;
+}
+
+const learn = `<section class="page-hero sky" data-starfield>
+  <div class="wrap">
+    <p class="crumb"><a href="/">Nyxa Network</a> / Learn</p>
+    <p class="pill">Testnet soon</p>
+    <h1>Learn <em>the dark.</em></h1>
+    <p class="lede">Three doors. The path a payment walks, the craft beneath it, and the questions people ask.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    ${learnNav("/learn.html")}
+    <div class="card-grid">
+      <a class="card" href="/how-it-works.html"><span class="card-kicker">The path</span><h3>Veil to arrival</h3><p>Four steps. A note, a proof, a relayer, an address.</p><span class="more">Walk it <i aria-hidden="true">→</i></span></a>
+      <a class="card" href="/docs.html"><span class="card-kicker">The craft</span><h3>Under the moon</h3><p>Proofs in the browser, a relayer, a tree of notes, no custodian.</p><span class="more">Read it <i aria-hidden="true">→</i></span></a>
+      <a class="card" href="/faq.html"><span class="card-kicker">Questions</span><h3>Asked in the open</h3><p>Short answers. The long one lives on the roadmap.</p><span class="more">Ask <i aria-hidden="true">→</i></span></a>
+    </div>
   </div>
 </section>`;
 
 const how = `<section class="page-hero sky" data-starfield>
   <div class="wrap page-hero-grid">
     <div>
-      <p class="crumb"><a href="/">Nyxa Network</a> / How it works</p>
-      <p class="pill">Illustrative</p>
+      <p class="crumb"><a href="/">Nyxa Network</a> / Learn</p>
+      <p class="pill">Testnet soon</p>
       <h1>A note leaves. <em>A payment arrives.</em></h1>
-      <p class="lede">This is the planned path of a private payment. The animation is a diagram. It is not a tracker, not a mempool, and not your funds.</p>
+      <p class="lede">This is the path. Veil, prove, relay, arrive.</p>
     </div>
     ${illustration("flow")}
   </div>
 </section>
 <section class="band sky" data-starfield>
   <div class="wrap">
+    ${learnNav("/how-it-works.html")}
     ${sequence()}
   </div>
 </section>
 <section class="band">
   <div class="wrap prose">
-    <h2>Read it slowly</h2>
-    <p>Veil creates the note. Prove shows the note is spendable without pointing at it. Relay puts that proof on a chain under someone else’s gas. Arrive is the recipient being paid. The link the pool is designed to withhold is the one between the first step and the last.</p>
-    <h2>What this diagram is not</h2>
-    <ul>
-      <li>Not a live payment feed.</li>
-      <li>Not evidence of volume, users, or deposits.</li>
-      <li>Not a claim that privacy is absolute. A relayer sees what it submits. A recipient sees what arrives. Amounts and timing remain visible as amounts and timing.</li>
-    </ul>
-    <div class="callout"><strong>Nothing in the sequence can be submitted.</strong> Contracts are not deployed. The app’s buttons stay on “Launching soon”.</div>
-    <p class="related"><a href="/docs.html">Architecture notes</a><a href="/app/">Open the app</a></p>
+    <h2>Read it by moonlight</h2>
+    <p>Veil makes the note. Prove shows it can be spent without pointing at it. Relay lays that proof on a chain under someone else’s gas. Arrive is an address, paid. The dark is the missing line between the first and the last.</p>
+    <p class="related"><a href="/docs.html">The craft</a><a href="/app/">Launch App</a></p>
   </div>
 </section>`;
 
-const chains = `<section class="page-hero sky" data-starfield>
+const network = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
-    <p class="crumb"><a href="/">Nyxa Network</a> / Chains</p>
-    <p class="pill">Planned networks</p>
-    <h1>Five names. <em>No deployment.</em></h1>
-    <p class="lede">Chain parameters below are the public networks themselves. Nyxa has not deployed contracts on them. Listing a chain here is not a deployment.</p>
+    <p class="crumb"><a href="/">Nyxa Network</a> / Network</p>
+    <p class="pill">Testnet soon</p>
+    <h1>Where the <em>night falls.</em></h1>
+    <p class="lede">Public chains. Nyxa’s pools join them at testnet. Listing a chain is not a claim that we run it.</p>
   </div>
 </section>
 <section class="band">
   <div class="wrap">
     <div class="chain-grid">
-      <article class="card chain-card"><h3>Robinhood Chain</h3><p>Chain id 4663. Gas token ETH. Public RPC <a href="https://rpc.mainnet.chain.robinhood.com" rel="noopener noreferrer">rpc.mainnet.chain.robinhood.com</a>. Explorer <a href="https://robinhoodchain.blockscout.com" rel="noopener noreferrer">robinhoodchain.blockscout.com</a>.</p><p><span class="tag">Contracts not deployed</span></p></article>
-      <article class="card chain-card"><h3>Base</h3><p>Chain id 8453. Gas token ETH. Public RPC <a href="https://mainnet.base.org" rel="noopener noreferrer">mainnet.base.org</a>. Explorer <a href="https://basescan.org" rel="noopener noreferrer">basescan.org</a>.</p><p><span class="tag">Contracts not deployed</span></p></article>
-      <article class="card chain-card"><h3>Arbitrum</h3><p>Chain id 42161. Gas token ETH. Public RPC <a href="https://arb1.arbitrum.io/rpc" rel="noopener noreferrer">arb1.arbitrum.io/rpc</a>. Explorer <a href="https://arbiscan.io" rel="noopener noreferrer">arbiscan.io</a>.</p><p><span class="tag">Contracts not deployed</span></p></article>
-      <article class="card chain-card"><h3>BNB Chain</h3><p>Chain id 56. Gas token BNB. Public RPC <a href="https://bsc-dataseed.binance.org" rel="noopener noreferrer">bsc-dataseed.binance.org</a>. Explorer <a href="https://bscscan.com" rel="noopener noreferrer">bscscan.com</a>.</p><p><span class="tag">Contracts not deployed</span></p></article>
-      <article class="card chain-card"><h3>Solana</h3><p>Planned as a destination, not as a pool home. It does not appear in the EVM network switcher. Your wallet stays on the source chain.</p><p><span class="tag">Destination only</span></p></article>
+      <article class="card chain-card"><h3>Robinhood Chain</h3><p>Chain id 4663. Gas in ETH. RPC <a href="https://rpc.mainnet.chain.robinhood.com" rel="noopener noreferrer">rpc.mainnet.chain.robinhood.com</a>. Explorer <a href="https://robinhoodchain.blockscout.com" rel="noopener noreferrer">blockscout</a>.</p></article>
+      <article class="card chain-card"><h3>Base</h3><p>Chain id 8453. Gas in ETH. RPC <a href="https://mainnet.base.org" rel="noopener noreferrer">mainnet.base.org</a>. Explorer <a href="https://basescan.org" rel="noopener noreferrer">basescan.org</a>.</p></article>
+      <article class="card chain-card"><h3>Arbitrum</h3><p>Chain id 42161. Gas in ETH. RPC <a href="https://arb1.arbitrum.io/rpc" rel="noopener noreferrer">arb1.arbitrum.io/rpc</a>. Explorer <a href="https://arbiscan.io" rel="noopener noreferrer">arbiscan.io</a>.</p></article>
+      <article class="card chain-card"><h3>BNB Chain</h3><p>Chain id 56. Gas in BNB. RPC <a href="https://bsc-dataseed.binance.org" rel="noopener noreferrer">bsc-dataseed.binance.org</a>. Explorer <a href="https://bscscan.com" rel="noopener noreferrer">bscscan.com</a>.</p></article>
+      <article class="card chain-card"><h3>Solana</h3><p>A destination, not a home for the pool. It is absent from the EVM switcher. The wallet stays on the source chain.</p></article>
     </div>
-    <div class="prose" style="margin-top:28px">
-      <p>References, not endorsements: <a href="https://docs.robinhood.com/chain/connecting/" rel="noopener noreferrer">Robinhood Chain</a>, <a href="https://docs.base.org/" rel="noopener noreferrer">Base</a>, <a href="https://docs.arbitrum.io/" rel="noopener noreferrer">Arbitrum</a>, <a href="https://docs.bnbchain.org/" rel="noopener noreferrer">BNB Chain</a>, <a href="https://solana.com/docs" rel="noopener noreferrer">Solana</a>.</p>
-    </div>
+  </div>
+</section>`;
+
+const roadmap = `<section class="page-hero sky page-hero-compact" data-starfield>
+  <div class="wrap">
+    <p class="crumb"><a href="/">Nyxa Network</a> / Roadmap</p>
+    <p class="pill">In development</p>
+    <h1>Four phases <em>of night.</em></h1>
+    <p class="lede">No dates. The order is the promise. We are in the first phase.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    <ol class="phases">
+      <li class="is-now">
+        <span class="phase-num">Phase 0 · Now</span>
+        <h2>Website</h2>
+        <p>The night is drawn. You are standing in it. The rites are named. The pools are still ahead.</p>
+      </li>
+      <li>
+        <span class="phase-num">Phase 1</span>
+        <h2>Testnet pools and relayer</h2>
+        <p>Notes, proofs, and a relayer on testnet. The app’s button wakes here.</p>
+      </li>
+      <li>
+        <span class="phase-num">Phase 2</span>
+        <h2>Audit</h2>
+        <p>An outside review, before anyone is asked to trust the dark with real value. That review has not begun.</p>
+      </li>
+      <li>
+        <span class="phase-num">Phase 3</span>
+        <h2>Mainnet</h2>
+        <p>The pools open on the chains named under Network. $NYXA’s address, if it has one, is announced only on official channels.</p>
+      </li>
+    </ol>
   </div>
 </section>`;
 
 const docs = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
-    <p class="crumb"><a href="/">Nyxa Network</a> / Docs</p>
-    <p class="pill">Planned architecture</p>
-    <h1>The plan, <em>written plainly.</em></h1>
-    <p class="lede">An overview of the architecture Nyxa intends to build. Not a specification freeze, not an audit, and not a description of deployed code. There is no deployed code.</p>
+    <p class="crumb"><a href="/">Nyxa Network</a> / Learn</p>
+    <p class="pill">Testnet soon</p>
+    <h1>Under the <em>moon.</em></h1>
+    <p class="lede">The shape of the craft. The proving system is still being chosen. An audit is phase two of the roadmap.</p>
   </div>
 </section>
 <section class="band">
   <div class="wrap prose">
-    <h2>Four planned parts</h2>
+    ${learnNav("/docs.html")}
+    <h2>Four parts</h2>
     <div class="arch">
-      <article><span class="card-kicker">Planned</span><h3>Browser</h3><p>Builds the proof from the note. The secret is not meant to leave the device.</p></article>
+      <article><span class="card-kicker">Browser</span><h3>The proof</h3><p>Built where the note already lives. The secret is not meant to travel.</p></article>
       <span class="arch-arrow" aria-hidden="true">→</span>
-      <article><span class="card-kicker">Planned</span><h3>Relayer</h3><p>Submits the proof and pays gas, so the depositor’s wallet is not the sender.</p></article>
+      <article><span class="card-kicker">Relayer</span><h3>The hand</h3><p>Submits the proof and pays gas, so the note’s wallet is not the sender.</p></article>
       <span class="arch-arrow" aria-hidden="true">→</span>
-      <article><span class="card-kicker">Planned</span><h3>Pool</h3><p>A contract that would store commitments in a Merkle tree. It is not deployed.</p></article>
+      <article><span class="card-kicker">Tree</span><h3>The grove</h3><p>Commitments in a Merkle tree. A later spend proves a leaf without naming it.</p></article>
       <span class="arch-arrow" aria-hidden="true">→</span>
-      <article><span class="card-kicker">Planned</span><h3>Arrival</h3><p>The recipient is paid. The link back to a specific deposit is what the design withholds.</p></article>
+      <article><span class="card-kicker">Arrival</span><h3>The shore</h3><p>An address is paid. The link to a particular note is what the dark keeps.</p></article>
     </div>
-    <h2>Non-custodial notes</h2>
-    <p>The design is non-custodial: Nyxa should never take custody of a note’s spend secret. Keys stay with the holder. That cannot be verified against deployed contracts, because none are deployed. Dawn, the recovery path, is still a signature by the holder’s own wallet — not a backup kept by us.</p>
-    <h2>Proofs in the browser</h2>
-    <p>The plan is to generate the zero-knowledge proof in the browser, so the raw note does not have to be sent to a server for someone else to prove. Which proving system, and which circuit, is not decided. This page will not pretend that it is.</p>
-    <h2>Merkle tree of notes</h2>
-    <p>Deposits are planned as commitments inserted into a Merkle tree. A later spend would prove knowledge of a leaf without revealing which leaf. The tree has no root today, because the contract that would hold it does not exist.</p>
-    <h2>The relayer</h2>
-    <p>A relayer is planned to submit the withdrawal and pay the network fee. That is how the payer’s own wallet stays off the transaction. Relayer selection — open, allowlisted, or operated — and the fee are not published yet. A relayer necessarily sees the transaction it submits.</p>
-    <h2>What would stay public</h2>
+    <h2>No custodian</h2>
+    <p>Nyxa is not meant to hold the spend secret. Dawn, when it comes, is still a signature from the holder’s own wallet.</p>
+    <h2>What stays in the open</h2>
     <ul>
-      <li>That a deposit of a given asset and size entered a pool.</li>
-      <li>That a payment of a given asset and size arrived.</li>
-      <li>The relayer’s address as the transaction sender.</li>
-      <li>The recipient address.</li>
+      <li>That a deposit of a given size entered.</li>
+      <li>That a payment of a given size arrived.</li>
+      <li>The relayer, as sender.</li>
+      <li>The address that was paid.</li>
     </ul>
-    <h2>What is deliberately undecided</h2>
+    <h2>Still unspoken</h2>
     <ul>
-      <li>The proving system.</li>
-      <li>The fee schedule.</li>
-      <li>Who may run a relayer.</li>
-      <li>The exact note format.</li>
-      <li>Contract addresses. There are none to publish.</li>
+      <li>Which proof system.</li>
+      <li>The fee.</li>
+      <li>Who may relay.</li>
+      <li>The exact shape of a note.</li>
+      <li>Any contract address.</li>
     </ul>
-    <div class="callout"><strong>Not an audit.</strong> Nothing on this page is a security review. No third party has been claimed as an auditor of Nyxa.</div>
   </div>
 </section>`;
 
 const faqs = [
-  ["Is Nyxa Network live?", "No. Nyxa is in development. The contracts are not deployed. The website describes the product being built and lets a wallet connect so you can see your own address and native balance. It cannot veil, whisper, swap, or cross."],
-  ["Can I deposit or send today?", "No. In the app, the action button is disabled and labelled “Launching soon”. Filling in a form does not create a transaction. If a submit event fires anyway, the page refuses it and sends nothing."],
-  ["Why connect a wallet if nothing can be sent?", "So the app can show the real account, the real network, and the real native balance from that wallet. It is a window onto your wallet, not a till. Nyxa will not ask for a seed phrase."],
-  ["Has Nyxa been audited?", "No audit is claimed. There is no deployed system to audit, and this site does not name an auditor, a report, or a date."],
-  ["What is the $NYXA contract address?", "There isn’t one. The token is not launched. The contract address will be announced only on official channels, and this website will be updated when that happens. It is blank on purpose."],
-  ["Which assets are planned?", "ETH, USDC, and USDG. Token balances are not shown in the app, because Nyxa has no contracts to read and this page does not look up someone else’s token addresses. The balance you see is the network’s native gas token, from your wallet."],
-  ["Which chains are planned?", "Robinhood Chain, Base, Arbitrum, and BNB Chain as pool networks. Solana as a destination only. Chain ids and public endpoints are listed on the Chains page. None of them host a Nyxa contract."],
-  ["Does Nyxa hold funds?", "The design is non-custodial: the spend secret of a note stays with the holder. Nyxa is not holding funds today because it cannot accept them. There is no deposit address."],
-  ["What would a relayer see?", "The withdrawal it is asked to submit, including the destination, because it has to broadcast that transaction. The pool is designed so other observers cannot match that withdrawal to a specific deposit. That matching resistance is a goal, not a measured result."],
-  ["Does “leave no trace” mean nobody can see anything?", "No. It is the aim of the design: remove the public link between a deposit and a later payment. Recipients see arrivals. Relayers see what they send. Amounts and timing still exist. A full privacy analysis waits until the design is frozen and actually reviewed."],
-  ["Is there an official social account?", "Not yet. There is no official X account. The only profile linked from this site is the GitHub repository in the footer."],
-  ["Someone sent me a contract address and called it $NYXA. Is it real?", "No. Nyxa Network has not launched the token. An address in a reply, an ad, or a direct message is not an announcement. Do not buy it and do not send funds to it."],
-  ["What is Dawn for?", "Recovery of a note from a signature by the wallet that created it. It is not a help desk, and it is not a way for Nyxa to reconstruct a secret we never stored. The exact signature format is not final."],
-  ["Is the animation a live payment?", "No. Anywhere you see the sequence Veil → Prove → Relay → Arrive, it is labelled as how it works. It is an illustration of the plan."],
+  ["Is Nyxa Network live?", "This website is phase zero. Testnet pools and a relayer are phase one. The order is on the roadmap."],
+  ["What does the app do today?", "It connects your wallet and reads the address, the network, and the native balance. The rites wait. The button reads Launching soon."],
+  ["Where is the $NYXA address?", "Announced only on official channels. Until that hour, the token page stays quiet on purpose."],
+  ["Has there been an audit?", "Audit is phase two. It has not begun. Nyxa does not name a reviewer, a report, or a date."],
+  ["Which assets?", "ETH, USDC, and USDG. The balance in the app is the chain’s own gas token, read from your wallet."],
+  ["Which chains?", "Robinhood Chain, Base, Arbitrum, and BNB Chain for the pool. Solana as a destination. Details live on Network."],
+  ["Who holds the secret?", "You do. Nyxa is built to never keep it. Dawn is a way back through your own wallet, not a spare kept by anyone else."],
+  ["What does a relayer see?", "The payment it agrees to carry, including the destination. Others are meant to see the arrival, not which note it came from."],
+  ["Does the dark hide everything?", "No. Recipients see what arrives. Relayers see what they send. Amounts and timing remain. The missing piece is the public link between a deposit and a later payment."],
+  ["Is there an official social account?", "Not yet. No X account. The only profile on this site is GitHub, in the footer."],
+  ["Someone sent me a contract address.", "It is not ours. $NYXA has no address until we announce one on official channels."],
 ];
 
 const faq = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
-    <p class="crumb"><a href="/">Nyxa Network</a> / FAQ</p>
-    <p class="pill">Plain answers</p>
-    <h1>Questions, <em>without theatre.</em></h1>
-    <p class="lede">Short answers about what exists today. If a question is about a user count or a total locked, the answer is that we do not publish figures we do not have.</p>
+    <p class="crumb"><a href="/">Nyxa Network</a> / Learn</p>
+    <p class="pill">Testnet soon</p>
+    <h1>Questions, <em>asked plainly.</em></h1>
+    <p class="lede">Short answers. The phases live on the roadmap.</p>
   </div>
 </section>
 <section class="band">
-  <div class="wrap faq">
-    ${faqs.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}
+  <div class="wrap">
+    ${learnNav("/faq.html")}
+    <div class="faq">
+      ${faqs.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("")}
+    </div>
   </div>
 </section>`;
 
 const token = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
     <p class="crumb"><a href="/">Nyxa Network</a> / $NYXA</p>
-    <p class="pill">Not launched</p>
-    <h1>The token is <em>not live.</em></h1>
-    <p class="lede">$NYXA is the planned token of Nyxa Network. It has no contract address. This page will not invent one, and it will not invent a supply, a price, or an allocation.</p>
+    <p class="pill">In development</p>
+    <h1>A mark, <em>waiting.</em></h1>
+    <p class="lede">$NYXA is the mark of Nyxa Network. Its address will be spoken only on official channels.</p>
   </div>
 </section>
 <section class="band">
@@ -611,19 +642,11 @@ const token = `<section class="page-hero sky" data-starfield>
     <p class="token-display">$NYXA</p>
     <div class="ca-blank">
       <span class="card-kicker">Contract address</span>
-      <strong>Not launched</strong>
-      <p>Announced only on official channels. This box stays empty until that announcement, and then the address published here will be the one to check against.</p>
+      <strong>Awaiting announcement</strong>
+      <p>When the address exists, it will be written here, and only an official channel will speak it first.</p>
     </div>
-    <h2>What this page refuses to guess</h2>
-    <ul>
-      <li>A contract address on any chain.</li>
-      <li>A total supply.</li>
-      <li>A price.</li>
-      <li>An allocation, a sale, or a claim.</li>
-    </ul>
-    <p>Any of those, if they ever exist, will be described when the token is actually launched. There is no sale on this website.</p>
     <div class="warning">
-      <p><strong>Do not buy a token from an address posted in a reply, an ad, or a direct message.</strong> Nyxa Network has not launched $NYXA. There is no official X account to confirm an address in a thread. The only profile linked from this site sits in the footer, and the contract address will be announced only on official channels.</p>
+      <p><strong>A stranger’s address is not ours.</strong> Ignore addresses offered in a reply, an ad, or a direct message. There is no public X account to “confirm” one. GitHub, in the footer, is the only profile linked from this site.</p>
     </div>
   </div>
 </section>`;
@@ -635,9 +658,9 @@ function field(id, label, control, hint = "") {
 const app = `<section class="app-hero sky" data-starfield>
   <div class="wrap">
     <p class="crumb"><a href="/">Nyxa Network</a> / App</p>
-    <p class="pill">In development</p>
-    <h1>A window, <em>not a till.</em></h1>
-    <p class="lede">Nyxa Network connects your own wallet and reads the native balance on that network. The forms are real. The action that would move funds stays disabled, because the contracts are not deployed.</p>
+    <p class="pill">Testnet soon</p>
+    <h1>Enter with <em>a wallet.</em></h1>
+    <p class="lede">Nyxa reads your address, your network, and the native balance. The rites open with testnet.</p>
   </div>
 </section>
 <section class="band" style="padding-top:28px">
@@ -646,7 +669,7 @@ const app = `<section class="app-hero sky" data-starfield>
       <p id="wallet-error" class="alert" role="alert" hidden></p>
       <div id="wallet-empty">
         <h2>Wallet</h2>
-        <p>Connect MetaMask, Rabby, OKX, or another EIP-1193 wallet. Nyxa reads your account and native balance. It never asks for a seed phrase.</p>
+        <p>MetaMask, Rabby, OKX, or any EIP-1193 wallet. Nyxa never asks for a seed phrase.</p>
         <button id="connect-btn" class="btn btn-moon" type="button">Connect wallet</button>
       </div>
       <div id="wallet-live" hidden>
@@ -660,7 +683,7 @@ const app = `<section class="app-hero sky" data-starfield>
         <p id="balance-raw" class="hint"></p>
         <p id="network-name"></p>
         <p id="network-id" class="hint"></p>
-        <a id="explorer-link" hidden rel="noopener noreferrer" target="_blank">View this address on the public explorer</a>
+        <a id="explorer-link" hidden rel="noopener noreferrer" target="_blank">View on the public explorer</a>
         <div class="wallet-actions">
           <button id="refresh-balance" class="btn btn-line" type="button">Refresh balance</button>
           <button id="disconnect-btn" class="btn btn-line" type="button">Clear</button>
@@ -668,12 +691,12 @@ const app = `<section class="app-hero sky" data-starfield>
       </div>
       <div>
         <h2>Network</h2>
-        <p class="hint">Robinhood Chain, Base, Arbitrum, or BNB Chain. Solana is a destination only. Nyxa does not operate these networks.</p>
-        <div id="network-switcher" class="network-switcher" role="group" aria-label="Planned networks"></div>
+        <p class="hint">Robinhood Chain, Base, Arbitrum, or BNB Chain. Solana is a far shore, not a source.</p>
+        <div id="network-switcher" class="network-switcher" role="group" aria-label="Networks"></div>
       </div>
     </aside>
     <div class="workspace panel">
-      <div class="tabs" role="tablist" aria-label="Planned actions">
+      <div class="tabs" role="tablist" aria-label="Rites">
         <button type="button" role="tab" id="tab-veil" aria-controls="panel-veil" aria-selected="true">Veil</button>
         <button type="button" role="tab" id="tab-whisper" aria-controls="panel-whisper" aria-selected="false" tabindex="-1">Whisper</button>
         <button type="button" role="tab" id="tab-eclipse" aria-controls="panel-eclipse" aria-selected="false" tabindex="-1">Eclipse</button>
@@ -681,38 +704,38 @@ const app = `<section class="app-hero sky" data-starfield>
       </div>
       <div role="tabpanel" id="panel-veil" aria-labelledby="tab-veil">
         <h2>Veil</h2>
-        <p class="hint">Draft a deposit. It will not be submitted.</p>
+        <p class="hint">Compose a note.</p>
         <form id="form-veil" data-plan novalidate>
           <div class="form-grid">
             <div class="form-row">
-              ${field("veil-asset", "Asset", '<select id="veil-asset" data-kind="asset" required></select>', "ETH, USDC, or USDG. No token balance is read.")}
-              ${field("veil-amount", "Amount", '<input id="veil-amount" data-kind="amount" inputmode="decimal" autocomplete="off" placeholder="Amount" required>', "A number greater than zero. Nothing is deposited.")}
+              ${field("veil-asset", "Asset", '<select id="veil-asset" data-kind="asset" required></select>', "ETH, USDC, or USDG.")}
+              ${field("veil-amount", "Amount", '<input id="veil-amount" data-kind="amount" inputmode="decimal" autocomplete="off" placeholder="Amount" required>', "How much the note holds.")}
             </div>
             <button class="btn btn-moon" type="submit" data-launch disabled>Launching soon</button>
-            <p class="launch-note" id="veil-launch">Contracts are not deployed, so Nyxa cannot send this.</p>
+            <p class="launch-note">Opens with testnet.</p>
             <p class="form-status" data-status role="status"></p>
           </div>
         </form>
       </div>
       <div role="tabpanel" id="panel-whisper" aria-labelledby="tab-whisper" hidden>
         <h2>Whisper</h2>
-        <p class="hint">Draft a private send on the connected EVM network. A relayer would pay gas. None of that can happen yet.</p>
+        <p class="hint">A payment carried by a relayer.</p>
         <form id="form-whisper" data-plan novalidate>
           <div class="form-grid">
             <div class="form-row">
               ${field("whisper-asset", "Asset", '<select id="whisper-asset" data-kind="asset" required></select>')}
               ${field("whisper-amount", "Amount", '<input id="whisper-amount" data-kind="amount" inputmode="decimal" autocomplete="off" placeholder="Amount" required>')}
             </div>
-            ${field("whisper-to", "Recipient address", '<input id="whisper-to" data-kind="address" autocomplete="off" spellcheck="false" placeholder="0x…" required>', "Format check only. This page does not verify the checksum.")}
+            ${field("whisper-to", "Recipient", '<input id="whisper-to" data-kind="address" autocomplete="off" spellcheck="false" placeholder="0x…" required>', "An Ethereum address. Format only — the checksum is not checked here.")}
             <button class="btn btn-moon" type="submit" data-launch disabled>Launching soon</button>
-            <p class="launch-note">Contracts are not deployed, so Nyxa cannot send this.</p>
+            <p class="launch-note">Opens with testnet.</p>
             <p class="form-status" data-status role="status"></p>
           </div>
         </form>
       </div>
       <div role="tabpanel" id="panel-eclipse" aria-labelledby="tab-eclipse" hidden>
         <h2>Eclipse</h2>
-        <p class="hint">Draft a swap inside the pool. There is no price to show, so none is shown.</p>
+        <p class="hint">Turn one asset into another. No rate is shown, because none exists yet.</p>
         <form id="form-eclipse" data-plan novalidate>
           <div class="form-grid">
             <div class="form-row">
@@ -721,19 +744,19 @@ const app = `<section class="app-hero sky" data-starfield>
             </div>
             ${field("eclipse-amount", "Amount", '<input id="eclipse-amount" data-kind="amount" inputmode="decimal" autocomplete="off" placeholder="Amount" required>')}
             <button class="btn btn-moon" type="submit" data-launch disabled>Launching soon</button>
-            <p class="launch-note">Contracts are not deployed, so Nyxa cannot send this.</p>
+            <p class="launch-note">Opens with testnet.</p>
             <p class="form-status" data-status role="status"></p>
           </div>
         </form>
       </div>
       <div role="tabpanel" id="panel-crossing" aria-labelledby="tab-crossing" hidden>
         <h2>Crossing</h2>
-        <p class="hint">Draft a cross-chain move. Solana can be a destination. It is not an EVM source.</p>
+        <p class="hint">Solana can be the far shore. It is not a source.</p>
         <form id="form-crossing" data-plan novalidate>
           <div class="form-grid">
             <div class="form-row">
-              ${field("cross-source", "Source chain", '<select id="cross-source" data-kind="chain" required></select>')}
-              ${field("cross-dest", "Destination chain", '<select id="cross-dest" data-kind="chain" required></select>')}
+              ${field("cross-source", "Source", '<select id="cross-source" data-kind="chain" required></select>')}
+              ${field("cross-dest", "Destination", '<select id="cross-dest" data-kind="chain" required></select>')}
             </div>
             <div class="form-row">
               ${field("cross-asset", "Asset", '<select id="cross-asset" data-kind="asset" required></select>')}
@@ -742,11 +765,11 @@ const app = `<section class="app-hero sky" data-starfield>
             <div class="field">
               <label for="cross-to" id="cross-to-label">Destination address</label>
               <input id="cross-to" data-kind="address" autocomplete="off" spellcheck="false" placeholder="0x…" required>
-              <span class="hint" id="cross-to-hint">An Ethereum-style address on the destination chain. Format check only.</span>
+              <span class="hint" id="cross-to-hint">Where the value should arrive.</span>
               <span class="error-text"></span>
             </div>
             <button class="btn btn-moon" type="submit" data-launch disabled>Launching soon</button>
-            <p class="launch-note">Contracts are not deployed, so Nyxa cannot send this.</p>
+            <p class="launch-note">Opens with testnet.</p>
             <p class="form-status" data-status role="status"></p>
           </div>
         </form>
@@ -764,28 +787,31 @@ const app = `<section class="app-hero sky" data-starfield>
 
 const missing = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
-    <p class="crumb"><a href="/">Nyxa Network</a> / 404</p>
-    <h1>This page is <em>not in the sky.</em></h1>
-    <p class="lede">That address is not part of the site. The pool is not missing — it was never deployed.</p>
-    <div class="actions"><a class="btn btn-moon" href="/">Back home</a></div>
+    <p class="crumb"><a href="/">Nyxa Network</a></p>
+    <p class="pill">Testnet soon</p>
+    <h1>This path <em>is unlit.</em></h1>
+    <p class="lede">That address is not part of Nyxa Network.</p>
+    <div class="actions"><a class="btn btn-moon" href="/">Return</a></div>
   </div>
 </section>`;
 
 const pages = [
-  ["index.html", "/", "/", "Nyxa Network — Pay in the dark.", "Nyxa Network is a private payment pool in development. Pay in the dark. Leave no trace. Contracts are not deployed.", home()],
-  ["veil.html", "/veil.html", "/veil.html", "Veil — Nyxa Network", "Veil is Nyxa Network’s planned deposit: shield ETH, USDC, or USDG as an encrypted note. In development. Contracts are not deployed.", veil],
-  ["whisper.html", "/whisper.html", "/whisper.html", "Whisper — Nyxa Network", "Whisper is Nyxa Network’s planned private send. A relayer would pay gas so the sender’s wallet does not appear. Not live.", whisper],
-  ["eclipse.html", "/eclipse.html", "/eclipse.html", "Eclipse — Nyxa Network", "Eclipse is Nyxa Network’s planned private swap inside the pool. No price is shown because no market exists yet.", eclipse],
-  ["crossing.html", "/crossing.html", "/crossing.html", "Crossing — Nyxa Network", "Crossing is Nyxa Network’s planned private move across Robinhood Chain, Base, Arbitrum, BNB Chain, and Solana as a destination.", crossing],
-  ["dawn.html", "/dawn.html", "/dawn.html", "Dawn — Nyxa Network", "Dawn is Nyxa Network’s planned recovery of a note from the wallet signature that created it. Non-custodial. Not live.", dawn],
-  ["agents.html", "/agents.html", "/agents.html", "Agents — Nyxa Network", "Nyxa Network plans a CLI and API for agents. No package and no endpoint are published.", agents],
-  ["how-it-works.html", "/how-it-works.html", "/how-it-works.html", "How it works — Nyxa Network", "An illustrative Nyxa Network sequence: Veil, prove, relay, arrive. A diagram of the plan, not a live payment.", how],
-  ["chains.html", "/chains.html", "/chains.html", "Chains — Nyxa Network", "Networks planned for Nyxa Network: Robinhood Chain, Base, Arbitrum, BNB Chain, and Solana as a destination. No contracts deployed.", chains],
-  ["docs.html", "/docs.html", "/docs.html", "Docs — Nyxa Network", "Planned Nyxa Network architecture: browser zero-knowledge proofs, a relayer, Merkle-tree notes, and a non-custodial design. Not an audit.", docs],
-  ["faq.html", "/faq.html", "/faq.html", "FAQ — Nyxa Network", "Plain answers about Nyxa Network: it is in development, unaudited, with no token address and no live pool.", faq],
-  ["token.html", "/token.html", "/token.html", "$NYXA — Nyxa Network", "The $NYXA token is not launched. Nyxa Network will announce the contract address only on official channels.", token],
-  ["app/index.html", "/app/", "/app/", "App — Nyxa Network", "Connect a wallet to Nyxa Network and read your real address, network, and native balance. Actions are disabled until launch.", app],
-  ["404.html", "/404.html", "/404.html", "Page not found — Nyxa Network", "That page is not part of the Nyxa Network site.", missing],
+  ["index.html", "/", "/", "Nyxa Network — Pay in the dark.", "Nyxa Network. Pay in the dark. Leave no trace. Private payments under moonlight. Testnet soon.", home()],
+  ["veil.html", "/veil.html", "/veil.html", "Veil — Nyxa Network", "Veil on Nyxa Network shields ETH, USDC, or USDG as a private note. Testnet soon.", veil],
+  ["whisper.html", "/whisper.html", "/whisper.html", "Whisper — Nyxa Network", "Whisper on Nyxa Network sends in the dark. A relayer pays the gas. Testnet soon.", whisper],
+  ["eclipse.html", "/eclipse.html", "/eclipse.html", "Eclipse — Nyxa Network", "Eclipse on Nyxa Network turns one asset into another inside the pool. Testnet soon.", eclipse],
+  ["crossing.html", "/crossing.html", "/crossing.html", "Crossing — Nyxa Network", "Crossing on Nyxa Network carries value across chains, with Solana as a far shore. Testnet soon.", crossing],
+  ["dawn.html", "/dawn.html", "/dawn.html", "Dawn — Nyxa Network", "Dawn on Nyxa Network remembers a note from the wallet that created it. Testnet soon.", dawn],
+  ["builders.html", "/builders.html", "/builders.html", "Builders — Nyxa Network", "Builders on Nyxa Network: a future CLI and API for AI agents. Testnet soon.", builders],
+  ["learn.html", "/learn.html", "/learn.html", "Learn — Nyxa Network", "Learn Nyxa Network: the path of a payment, the craft beneath it, and common questions.", learn],
+  ["how-it-works.html", "/how-it-works.html", "/how-it-works.html", "The path — Nyxa Network", "The path on Nyxa Network: veil, prove, relay, arrive.", how],
+  ["network.html", "/network.html", "/network.html", "Network — Nyxa Network", "Networks for Nyxa Network: Robinhood Chain, Base, Arbitrum, BNB Chain, and Solana as a far shore.", network],
+  ["roadmap.html", "/roadmap.html", "/roadmap.html", "Roadmap — Nyxa Network", "Nyxa Network roadmap: website, testnet pools and relayer, audit, then mainnet. No dates.", roadmap],
+  ["docs.html", "/docs.html", "/docs.html", "The craft — Nyxa Network", "The craft of Nyxa Network: browser proofs, a relayer, Merkle notes, and no custodian.", docs],
+  ["faq.html", "/faq.html", "/faq.html", "Questions — Nyxa Network", "Questions about Nyxa Network, answered shortly. The phases are on the roadmap.", faq],
+  ["token.html", "/token.html", "/token.html", "$NYXA — Nyxa Network", "$NYXA is the mark of Nyxa Network. The contract address will be announced only on official channels.", token],
+  ["app/index.html", "/app/", "/app/", "App — Nyxa Network", "Launch the Nyxa Network app. Connect a wallet and read your real address, network, and native balance.", app],
+  ["404.html", "/404.html", "/404.html", "Unlit — Nyxa Network", "That page is not part of Nyxa Network.", missing],
 ];
 
 const eip = `<script>
@@ -798,6 +824,11 @@ window.addEventListener("eip6963:announceProvider", function (event) {
 });
 window.dispatchEvent(new Event("eip6963:requestProvider"));
 </script>`;
+
+for (const stale of ["agents.html", "chains.html"]) {
+  const old = join(root, stale);
+  if (existsSync(old)) unlinkSync(old);
+}
 
 for (const [file, path, current, title, description, main] of pages) {
   if (!title.includes("Nyxa Network")) throw new Error("Title missing brand: " + title);

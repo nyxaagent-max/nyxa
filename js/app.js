@@ -586,11 +586,11 @@
 
     if (status) {
       if (ok && [...form.querySelectorAll("[data-kind]")].every((field) => field.value.trim())) {
-        status.textContent = "These fields check out. Nyxa still cannot submit them.";
+        status.textContent = "Ready. It opens with testnet.";
       } else if (announceBlocked) {
-        status.textContent = "Launching soon. Nyxa cannot submit this because the contracts are not deployed.";
+        status.textContent = "Launching soon.";
       } else if (!ok) {
-        status.textContent = "Fix the highlighted fields. Nothing will be sent.";
+        status.textContent = "Look again at the highlighted fields.";
       }
     }
     const launch = form.querySelector("[data-launch]");
