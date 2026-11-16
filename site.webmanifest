@@ -1,0 +1,16 @@
+{
+  "name": "Nyxa Network",
+  "short_name": "Nyxa Network",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f3fb",
+  "theme_color": "#3a2788",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

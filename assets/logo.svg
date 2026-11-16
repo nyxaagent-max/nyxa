@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Nyxa Network">
+  <title>Nyxa Network</title>
+  <defs>
+    <mask id="nyxa-crescent">
+      <rect width="64" height="64" fill="#000"/>
+      <circle cx="26" cy="34" r="18" fill="#fff"/>
+      <circle cx="37.5" cy="28" r="15.2" fill="#000"/>
+    </mask>
+  </defs>
+  <circle cx="26" cy="34" r="18" fill="#E0B44F" mask="url(#nyxa-crescent)"/>
+  <path d="M37.5 48V29.2L52.5 48V29.2" stroke="#2A1C68" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path fill="#E0B44F" d="M55.2 13.2l.85 2.35 2.45.35-1.9 1.6.62 2.4-2.02-1.28-2.02 1.28.62-2.4-1.9-1.6 2.45-.35z"/>
+</svg>

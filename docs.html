@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Docs — Nyxa Network</title>
+  <meta name="description" content="Planned Nyxa Network architecture: browser zero-knowledge proofs, a relayer, Merkle-tree notes, and a non-custodial design. Not an audit.">
+  <link rel="canonical" href="https://nyxa.cash/docs.html">
+  <meta property="og:site_name" content="Nyxa Network">
+  <meta property="og:title" content="Docs — Nyxa Network">
+  <meta property="og:description" content="Planned Nyxa Network architecture: browser zero-knowledge proofs, a relayer, Merkle-tree notes, and a non-custodial design. Not an audit.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nyxa.cash/docs.html">
+  <meta name="theme-color" content="#3a2788">
+  <meta name="apple-mobile-web-app-title" content="Nyxa Network">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/css/site.css">
+  <script>document.documentElement.classList.add("js");</script>
+  
+</head>
+<body class="is-entering">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="mark-header">
+        <rect width="64" height="64" fill="#000"/>
+        <circle cx="26" cy="34" r="18" fill="#fff"/>
+        <circle cx="37.5" cy="28" r="15.2" fill="#000"/>
+      </mask>
+    </defs>
+    <circle cx="26" cy="34" r="18" fill="#E0B44F" mask="url(#mark-header)"/>
+    <path d="M37.5 48V29.2L52.5 48V29.2" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#E0B44F" d="M55.2 13.2l.85 2.35 2.45.35-1.9 1.6.62 2.4-2.02-1.28-2.02 1.28.62-2.4-1.9-1.6 2.45-.35z"/>
+  </svg>
+    <span class="wordmark">Nyxa <em>Network</em></span>
+  </a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+    <span class="sr-only">Menu</span>
+    <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+  </button>
+  <nav id="site-nav" aria-label="Primary">
+    <a class="nav-link" href="/">Home</a><a class="nav-link" href="/veil.html">Veil</a><a class="nav-link" href="/whisper.html">Whisper</a><a class="nav-link" href="/eclipse.html">Eclipse</a><a class="nav-link" href="/crossing.html">Crossing</a><a class="nav-link" href="/dawn.html">Dawn</a><a class="nav-link" href="/agents.html">Agents</a><a class="nav-link" href="/how-it-works.html">How it works</a><a class="nav-link" href="/chains.html">Chains</a><a class="nav-link" href="/docs.html" aria-current="page">Docs</a><a class="nav-link" href="/faq.html">FAQ</a><a class="nav-link" href="/token.html">$NYXA</a>
+    <a class="btn btn-moon nav-cta" href="/app/">Open app</a>
+  </nav>
+  <div class="scroll-progress" aria-hidden="true"></div>
+</header>
+<noscript><p class="noscript-banner">JavaScript is off. You can still read Nyxa Network. Wallet connection and the animated sequence need JavaScript.</p></noscript>
+<main id="main">
+<section class="page-hero sky" data-starfield>
+  <div class="wrap">
+    <p class="crumb"><a href="/">Nyxa Network</a> / Docs</p>
+    <p class="pill">Planned architecture</p>
+    <h1>The plan, <em>written plainly.</em></h1>
+    <p class="lede">An overview of the architecture Nyxa intends to build. Not a specification freeze, not an audit, and not a description of deployed code. There is no deployed code.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap prose">
+    <h2>Four planned parts</h2>
+    <div class="arch">
+      <article><span class="card-kicker">Planned</span><h3>Browser</h3><p>Builds the proof from the note. The secret is not meant to leave the device.</p></article>
+      <span class="arch-arrow" aria-hidden="true">→</span>
+      <article><span class="card-kicker">Planned</span><h3>Relayer</h3><p>Submits the proof and pays gas, so the depositor’s wallet is not the sender.</p></article>
+      <span class="arch-arrow" aria-hidden="true">→</span>
+      <article><span class="card-kicker">Planned</span><h3>Pool</h3><p>A contract that would store commitments in a Merkle tree. It is not deployed.</p></article>
+      <span class="arch-arrow" aria-hidden="true">→</span>
+      <article><span class="card-kicker">Planned</span><h3>Arrival</h3><p>The recipient is paid. The link back to a specific deposit is what the design withholds.</p></article>
+    </div>
+    <h2>Non-custodial notes</h2>
+    <p>The design is non-custodial: Nyxa should never take custody of a note’s spend secret. Keys stay with the holder. That cannot be verified against deployed contracts, because none are deployed. Dawn, the recovery path, is still a signature by the holder’s own wallet — not a backup kept by us.</p>
+    <h2>Proofs in the browser</h2>
+    <p>The plan is to generate the zero-knowledge proof in the browser, so the raw note does not have to be sent to a server for someone else to prove. Which proving system, and which circuit, is not decided. This page will not pretend that it is.</p>
+    <h2>Merkle tree of notes</h2>
+    <p>Deposits are planned as commitments inserted into a Merkle tree. A later spend would prove knowledge of a leaf without revealing which leaf. The tree has no root today, because the contract that would hold it does not exist.</p>
+    <h2>The relayer</h2>
+    <p>A relayer is planned to submit the withdrawal and pay the network fee. That is how the payer’s own wallet stays off the transaction. Relayer selection — open, allowlisted, or operated — and the fee are not published yet. A relayer necessarily sees the transaction it submits.</p>
+    <h2>What would stay public</h2>
+    <ul>
+      <li>That a deposit of a given asset and size entered a pool.</li>
+      <li>That a payment of a given asset and size arrived.</li>
+      <li>The relayer’s address as the transaction sender.</li>
+      <li>The recipient address.</li>
+    </ul>
+    <h2>What is deliberately undecided</h2>
+    <ul>
+      <li>The proving system.</li>
+      <li>The fee schedule.</li>
+      <li>Who may run a relayer.</li>
+      <li>The exact note format.</li>
+      <li>Contract addresses. There are none to publish.</li>
+    </ul>
+    <div class="callout"><strong>Not an audit.</strong> Nothing on this page is a security review. No third party has been claimed as an auditor of Nyxa.</div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="/">
+          <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="mark-footer">
+        <rect width="64" height="64" fill="#000"/>
+        <circle cx="26" cy="34" r="18" fill="#fff"/>
+        <circle cx="37.5" cy="28" r="15.2" fill="#000"/>
+      </mask>
+    </defs>
+    <circle cx="26" cy="34" r="18" fill="#E0B44F" mask="url(#mark-footer)"/>
+    <path d="M37.5 48V29.2L52.5 48V29.2" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#E0B44F" d="M55.2 13.2l.85 2.35 2.45.35-1.9 1.6.62 2.4-2.02-1.28-2.02 1.28.62-2.4-1.9-1.6 2.45-.35z"/>
+  </svg>
+          <span class="wordmark">Nyxa <em>Network</em></span>
+        </a>
+        <p class="footer-blurb">Private payments, planned in the open. Nyxa is in development: no contracts deployed, no audit claimed, no token address published.</p>
+      </div>
+      <div>
+        <h2>Product</h2>
+        <ul>
+          <li><a href="/veil.html">Veil</a></li>
+          <li><a href="/whisper.html">Whisper</a></li>
+          <li><a href="/eclipse.html">Eclipse</a></li>
+          <li><a href="/crossing.html">Crossing</a></li>
+          <li><a href="/dawn.html">Dawn</a></li>
+          <li><a href="/agents.html">Agents</a></li>
+          <li><a href="/app/">App</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/how-it-works.html">How it works</a></li>
+          <li><a href="/chains.html">Chains</a></li>
+          <li><a href="/docs.html">Docs</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          <li><a href="/token.html">$NYXA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <p>© 2026 Nyxa Network. In development. Contracts are not deployed.</p>
+      <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </div>
+</footer>
+<script src="/js/site.js"></script>
+
+</body>
+</html>

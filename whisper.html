@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Whisper — Nyxa Network</title>
+  <meta name="description" content="Whisper is Nyxa Network’s planned private send. A relayer would pay gas so the sender’s wallet does not appear. Not live.">
+  <link rel="canonical" href="https://nyxa.cash/whisper.html">
+  <meta property="og:site_name" content="Nyxa Network">
+  <meta property="og:title" content="Whisper — Nyxa Network">
+  <meta property="og:description" content="Whisper is Nyxa Network’s planned private send. A relayer would pay gas so the sender’s wallet does not appear. Not live.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nyxa.cash/whisper.html">
+  <meta name="theme-color" content="#3a2788">
+  <meta name="apple-mobile-web-app-title" content="Nyxa Network">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="/css/site.css">
+  <script>document.documentElement.classList.add("js");</script>
+  
+</head>
+<body class="is-entering">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="mark-header">
+        <rect width="64" height="64" fill="#000"/>
+        <circle cx="26" cy="34" r="18" fill="#fff"/>
+        <circle cx="37.5" cy="28" r="15.2" fill="#000"/>
+      </mask>
+    </defs>
+    <circle cx="26" cy="34" r="18" fill="#E0B44F" mask="url(#mark-header)"/>
+    <path d="M37.5 48V29.2L52.5 48V29.2" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#E0B44F" d="M55.2 13.2l.85 2.35 2.45.35-1.9 1.6.62 2.4-2.02-1.28-2.02 1.28.62-2.4-1.9-1.6 2.45-.35z"/>
+  </svg>
+    <span class="wordmark">Nyxa <em>Network</em></span>
+  </a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+    <span class="sr-only">Menu</span>
+    <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+  </button>
+  <nav id="site-nav" aria-label="Primary">
+    <a class="nav-link" href="/">Home</a><a class="nav-link" href="/veil.html">Veil</a><a class="nav-link" href="/whisper.html" aria-current="page">Whisper</a><a class="nav-link" href="/eclipse.html">Eclipse</a><a class="nav-link" href="/crossing.html">Crossing</a><a class="nav-link" href="/dawn.html">Dawn</a><a class="nav-link" href="/agents.html">Agents</a><a class="nav-link" href="/how-it-works.html">How it works</a><a class="nav-link" href="/chains.html">Chains</a><a class="nav-link" href="/docs.html">Docs</a><a class="nav-link" href="/faq.html">FAQ</a><a class="nav-link" href="/token.html">$NYXA</a>
+    <a class="btn btn-moon nav-cta" href="/app/">Open app</a>
+  </nav>
+  <div class="scroll-progress" aria-hidden="true"></div>
+</header>
+<noscript><p class="noscript-banner">JavaScript is off. You can still read Nyxa Network. Wallet connection and the animated sequence need JavaScript.</p></noscript>
+<main id="main">
+<section class="page-hero sky" data-starfield>
+    <div class="wrap page-hero-grid">
+      <div>
+        <p class="crumb"><a href="/">Nyxa Network</a> / Whisper</p>
+        <p class="pill">In development</p>
+        <h1>Send, and stay off <em>the envelope.</em></h1>
+        <p class="lede">Whisper is the private payment. A relayer is planned to submit the transaction and pay the gas, so the wallet that funded the note is not the wallet that appears as the sender.</p>
+      </div>
+      <svg class="illo" viewBox="0 0 360 280" fill="none" aria-hidden="true"><path d="M70 150c40-70 180-70 220 0" stroke="#F3E0A8" stroke-width="1.5" stroke-linecap="round"/><path d="M100 150c28-46 132-46 160 0" stroke="#F7F1E2" stroke-width="1.5" stroke-linecap="round"/><path d="M130 150c16-24 84-24 100 0" stroke="#F7F1E2" stroke-width="1.5" stroke-linecap="round"/><circle cx="180" cy="150" r="6" fill="#F3E0A8"/></svg>
+    </div>
+  </section>
+  <section class="band">
+    <div class="wrap prose-grid">
+      <div class="prose"><p>You would choose a note and a recipient address. The browser prepares a proof that the note is unspent, without revealing which note. The relayer broadcasts that proof. The recipient is paid.</p>
+  <h2>What is supposed to stay hidden</h2>
+  <p>The public record is designed to show an arrival, not the path back to the deposit. That is a design goal, not a property you can test today. There is no deployment, and Nyxa claims no audit.</p>
+  <h2>What the relayer would see</h2>
+  <p>The relayer sees the withdrawal it is asked to submit, including the destination, because it has to send that transaction. Observers who are not the relayer are who the pool is designed to keep from matching deposit to withdrawal. Amounts can still be compared. Timing can still be compared. A serious write-up of those limits waits until the design is frozen.</p>
+  <ol class="steps"><li><span class="num">01</span><div><h3>Select</h3><p>A note you hold, an asset, and an Ethereum address on the connected network.</p></div></li><li><span class="num">02</span><div><h3>Prove</h3><p>A browser-side proof that the note is real and unspent. The proving system is not chosen yet.</p></div></li><li><span class="num">03</span><div><h3>Relay</h3><p>Someone else pays the gas and is the sender the chain records.</p></div></li></ol>
+  <p class="related"><a href="/veil.html">Veil</a><a href="/crossing.html">Crossing</a><a href="/docs.html">Docs</a></p></div>
+      <aside class="side-card">
+        <h2>Status</h2>
+        <p><span class="tag">In development</span></p>
+        <p>Contracts are not deployed. You can draft this in the app. The button stays disabled.</p>
+        <p><a class="btn btn-line" href="/app/#whisper">Open the Whisper form</a></p>
+      </aside>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="/">
+          <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="mark-footer">
+        <rect width="64" height="64" fill="#000"/>
+        <circle cx="26" cy="34" r="18" fill="#fff"/>
+        <circle cx="37.5" cy="28" r="15.2" fill="#000"/>
+      </mask>
+    </defs>
+    <circle cx="26" cy="34" r="18" fill="#E0B44F" mask="url(#mark-footer)"/>
+    <path d="M37.5 48V29.2L52.5 48V29.2" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill="#E0B44F" d="M55.2 13.2l.85 2.35 2.45.35-1.9 1.6.62 2.4-2.02-1.28-2.02 1.28.62-2.4-1.9-1.6 2.45-.35z"/>
+  </svg>
+          <span class="wordmark">Nyxa <em>Network</em></span>
+        </a>
+        <p class="footer-blurb">Private payments, planned in the open. Nyxa is in development: no contracts deployed, no audit claimed, no token address published.</p>
+      </div>
+      <div>
+        <h2>Product</h2>
+        <ul>
+          <li><a href="/veil.html">Veil</a></li>
+          <li><a href="/whisper.html">Whisper</a></li>
+          <li><a href="/eclipse.html">Eclipse</a></li>
+          <li><a href="/crossing.html">Crossing</a></li>
+          <li><a href="/dawn.html">Dawn</a></li>
+          <li><a href="/agents.html">Agents</a></li>
+          <li><a href="/app/">App</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/how-it-works.html">How it works</a></li>
+          <li><a href="/chains.html">Chains</a></li>
+          <li><a href="/docs.html">Docs</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          <li><a href="/token.html">$NYXA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <p>© 2026 Nyxa Network. In development. Contracts are not deployed.</p>
+      <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </div>
+</footer>
+<script src="/js/site.js"></script>
+
+</body>
+</html>
