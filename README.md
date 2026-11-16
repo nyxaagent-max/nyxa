@@ -29,6 +29,8 @@ The site does not show invented balances, totals, user counts, testimonials, par
 
 The header is the logo, a Protocol menu, and Launch App. Protocol lists Veil, Whisper, Eclipse, Crossing, Dawn, Network, Roadmap, Builders, Learn, and $NYXA. Learn links onward to the path, the craft, and questions. `/app/` connects a wallet.
 
+The home page and the app include a live terminal labelled “Live network feed — public chain data”. It reads block number, gas, and recent transaction hashes from the public RPCs for Robinhood Chain, Base, Arbitrum, and BNB Chain. Those figures are chain data, not Nyxa payments. If a request fails, the line says `reconnecting…`.
+
 The roadmap is four phases with no dates: website (current), testnet pools and relayer, audit, mainnet.
 
 The craft page describes the planned architecture only: proofs built in the browser, a relayer, Merkle-tree notes, and a non-custodial design. It is not a specification freeze and not an audit.

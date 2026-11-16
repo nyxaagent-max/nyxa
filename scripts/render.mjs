@@ -186,6 +186,8 @@ ${main}
 </main>
 ${footer()}
 <script src="/js/site.js"></script>
+${path === "/" || path === "/app/" ? '<script src="/js/feed.js"></script>' : ""}
+${path === "/" ? '<script src="/js/stage.js"></script>' : ""}
 ${path === "/app/" ? '<script src="/js/app.js"></script>' : ""}
 </body>
 </html>
@@ -225,82 +227,165 @@ function sequence() {
 }
 
 function home() {
-  return `<section class="hero sky" data-starfield>
-    <div class="wrap hero-inner">
-      <div class="hero-copy">
-        <p class="pill">Testnet soon</p>
-        <p class="hero-brand">Nyxa <em>Network</em></p>
-        <h1 aria-label="Pay in the dark. Leave no trace.">
-          <span class="type-line" aria-hidden="true">
-            <span class="type-sizer">Pay in the dark.</span>
-            <span class="type-text" data-typewriter>Pay in the dark.</span>
-          </span>
-          <em class="line-two">Leave no trace.</em>
-        </h1>
-        <p class="lede">Named for Nyx. A note enters the pool. A payment leaves it. The path between them stays unlit.</p>
-        <div class="hero-actions">
-          <a class="btn btn-moon" href="/app/">Launch App</a>
-          <a class="btn btn-ghost" href="/how-it-works.html">See the path</a>
+  const step = (name) => `<li data-step><span>${name}</span><span class="ss">queued</span></li>`;
+  const steps = ["Shield", "Prove", "Relay", "Arrive"].map(step).join("");
+  return `<section class="hero sky">
+    <div class="wrap">
+      <div class="hero-top">
+        <div>
+          <p class="pill">Testnet soon</p>
+          <h1 aria-label="Pay in the dark. Leave no trace.">Pay in the dark.<br><em>Leave no trace.</em></h1>
         </div>
-        <p class="legend"><span>In the dark</span><span>Notes born in the browser</span><span>A relayer pays gas</span><span>The path stays quiet</span></p>
+        <div>
+          <p class="lede">Nyxa Network is a private pool named for Nyx. Shield a note, send from the dark, and let the path between them go quiet.</p>
+          <div class="hero-actions">
+            <a class="btn btn-moon" href="/app/">Launch App</a>
+            <a class="btn btn-ghost" href="/learn.html">Learn the night</a>
+          </div>
+        </div>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="moon-wrap">
-          <div class="orbit orbit-a"><span class="bead"></span></div>
-          <div class="orbit orbit-b"></div>
-          <div class="moon"></div>
-          <div class="note-card">
-            <span class="note-mark"></span>
-            <span class="note-line"></span>
-            <span class="note-line short"></span>
-            <span class="note-caption">A private note</span>
+      <ul class="chips">
+        <li>Robinhood Chain</li>
+        <li>Base</li>
+        <li>Arbitrum</li>
+        <li>BNB Chain</li>
+        <li>Solana <small>bridge only</small></li>
+        <li>Ethereum <small>bridge only</small></li>
+      </ul>
+      <div class="stage" data-stage>
+        <div class="stage-top">
+          <span class="example-tag">Example</span>
+          <span class="stage-note">A walkthrough of the rites. Not a live payment.</span>
+        </div>
+        <div class="stage-body">
+          <div class="stage-nav" role="tablist" aria-label="Example rites">
+            <button type="button" data-stage-tab role="tab" aria-selected="true">Veil</button>
+            <button type="button" data-stage-tab role="tab" aria-selected="false">Whisper</button>
+            <button type="button" data-stage-tab role="tab" aria-selected="false">Eclipse</button>
+            <button type="button" data-stage-tab role="tab" aria-selected="false">Crossing</button>
+            <button type="button" data-stage-tab role="tab" aria-selected="false">Dawn</button>
+          </div>
+          <div class="stage-main">
+            <div data-stage-panel>
+              <p class="stage-kicker">Veil · example</p>
+              <div class="stage-form"><div><span>Asset</span><b>ETH</b></div><div><span>Amount</span><b>1.00 ETH</b></div></div>
+              <ol class="stage-steps">${steps}</ol>
+            </div>
+            <div data-stage-panel hidden>
+              <p class="stage-kicker">Whisper · example</p>
+              <div class="stage-form"><div><span>To</span><b>0x9f…e7</b></div><div><span>Amount</span><b>0.25 ETH</b></div></div>
+              <ol class="stage-steps">${steps}</ol>
+            </div>
+            <div data-stage-panel hidden>
+              <p class="stage-kicker">Eclipse · example</p>
+              <div class="stage-form"><div><span>From</span><b>0.50 ETH</b></div><div><span>Toward</span><b>USDC</b></div></div>
+              <ol class="stage-steps">${steps}</ol>
+            </div>
+            <div data-stage-panel hidden>
+              <p class="stage-kicker">Crossing · example</p>
+              <div class="stage-form"><div><span>From</span><b>Base</b></div><div><span>Far shore</span><b>Solana</b></div></div>
+              <ol class="stage-steps">${steps}</ol>
+            </div>
+            <div data-stage-panel hidden>
+              <p class="stage-kicker">Dawn · example</p>
+              <div class="stage-form"><div><span>From</span><b>A signature</b></div><div><span>Looking</span><b>4 chains</b></div></div>
+              <ol class="stage-steps">${["Remember", "Scan", "Sweep", "Return"].map(step).join("")}</ol>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <section class="band band-tight" id="instruments">
+  <section class="band" id="live" style="padding-top:36px">
     <div class="wrap">
-      <h2 class="indexed" data-index="01">Five rites</h2>
-      <p class="section-lead">One pool. Five names. Each one a way through the dark.</p>
+      <p class="feed-kicker">Live network feed — public chain data</p>
+      <div class="term" data-feed>
+        <div class="term-top"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Robinhood Chain · Base · Arbitrum · BNB Chain</span></div>
+        <div class="term-screen" data-feed-screen role="log" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="steps">
+    <div class="wrap">
+      <h2>Every step, kept in the dark</h2>
+      <p class="section-lead">Five rites. One pool. The path between a deposit and a payment is what the night is for.</p>
       <div class="card-grid">
-        ${card("/veil.html", "veil", "Shield", "Veil", "ETH, USDC, or USDG, drawn into a note only you can spend.", 0)}
-        ${card("/whisper.html", "whisper", "Murmur", "Whisper", "A payment to any address. A relayer carries the gas.", 60)}
-        ${card("/eclipse.html", "eclipse", "Turn", "Eclipse", "One asset becomes another, inside the pool.", 120)}
-        ${card("/crossing.html", "crossing", "Passage", "Crossing", "Value across chains. Solana waits as a far shore.", 180)}
-        ${card("/dawn.html", "dawn", "Return", "Dawn", "A note remembered by the wallet that made it.", 240)}
-        ${card("/builders.html", "builders", "Makers", "Builders", "A CLI and API, so an AI agent can walk the same path.", 300)}
+        <a class="card" href="/veil.html">
+          <span class="card-kicker">Veil</span>
+          <h3>Shield a note</h3>
+          <div class="mini-ui"><span class="example-tag">Example</span><span>Amount</span><b>1.00 ETH → a private note</b></div>
+        </a>
+        <a class="card" href="/whisper.html">
+          <span class="card-kicker">Whisper</span>
+          <h3>Send, and stay unnamed</h3>
+          <div class="mini-ui"><span class="example-tag">Example</span><span>A relayer pays the gas</span><b>0.25 ETH toward an address</b></div>
+        </a>
+        <a class="card" href="/eclipse.html">
+          <span class="card-kicker">Eclipse</span>
+          <h3>Turn one asset into another</h3>
+          <div class="mini-ui"><span class="example-tag">Example</span><span>Inside the pool</span><b>ETH toward USDC</b></div>
+        </a>
+        <a class="card" href="/crossing.html">
+          <span class="card-kicker">Crossing</span>
+          <h3>A far shore, still dark</h3>
+          <div class="mini-ui"><span class="example-tag">Example</span><span>Base to Solana</span><b>Value arrives without the road</b></div>
+        </a>
+        <a class="card" href="/dawn.html">
+          <span class="card-kicker">Dawn</span>
+          <h3>The wallet remembers</h3>
+          <div class="mini-ui"><span class="example-tag">Example</span><span>From a signature</span><b>Notes found again</b></div>
+        </a>
+        <a class="card" href="/builders.html">
+          <span class="card-kicker">Builders</span>
+          <h3>For agents of the night</h3>
+          <p>A CLI and an API, still being written.</p>
+        </a>
       </div>
     </div>
   </section>
-  <section class="band sky" id="sequence" data-starfield>
+  <section class="band" id="principles" style="padding-top:10px">
     <div class="wrap">
-      <h2 class="indexed" data-index="02">From veil to arrival</h2>
-      <p class="section-lead">Watch the path a payment takes.</p>
-      ${sequence()}
-    </div>
-  </section>
-  <section class="band" id="shores">
-    <div class="wrap">
-      <h2 class="indexed" data-index="03">Shores</h2>
-      <p class="section-lead">The night is drawn for these chains. The pools join them at testnet.</p>
-      <div class="chain-row">
-        <a class="chain-pill" href="/network.html"><strong>Robinhood Chain</strong><span>Chain id 4663 · ETH</span></a>
-        <a class="chain-pill" href="/network.html"><strong>Base</strong><span>Chain id 8453 · ETH</span></a>
-        <a class="chain-pill" href="/network.html"><strong>Arbitrum</strong><span>Chain id 42161 · ETH</span></a>
-        <a class="chain-pill" href="/network.html"><strong>BNB Chain</strong><span>Chain id 56 · BNB</span></a>
-        <a class="chain-pill" href="/network.html"><strong>Solana</strong><span>A far shore</span></a>
+      <div class="quotes">
+        <article class="quote"><p>“The note does not wait in a queue of fixed sizes. Any amount can enter the night.”</p><span>Veil</span></article>
+        <article class="quote"><p>“The proof is born in the browser. The secret stays where you already are.”</p><span>On the device</span></article>
+        <article class="quote"><p>“A relayer pays the gas. The chain meets another hand, not yours.”</p><span>Whisper</span></article>
+        <article class="quote"><p>“If the path breaks, the same wallet can look again.”</p><span>Dawn</span></article>
       </div>
     </div>
   </section>
-  <section class="band sky close-band" data-starfield>
+  <section class="band" id="builders">
     <div class="wrap">
-      <h2>The next moon <em>is testnet.</em></h2>
-      <p class="section-lead">Bring a wallet. Read what the chain already knows. The rites open when the testnet does.</p>
-      <div class="actions">
-        <a class="btn btn-moon" href="/app/">Launch App</a>
-        <a class="btn btn-ghost" href="/roadmap.html">Read the roadmap</a>
+      <div class="cli">
+        <div>
+          <p class="card-kicker">Planned</p>
+          <h2>Your agent can walk the same dark.</h2>
+          <p class="lede" style="margin-top:12px">A command line and an API are planned for AI agents. Nothing here is published, and the lines beside this do not run.</p>
+          <div class="actions"><a class="btn btn-moon" href="/builders.html">For builders</a></div>
+        </div>
+        <pre class="sketch"><code># Planned interface. These commands are not available.
+nyxa veil --asset ETH --amount AMOUNT
+nyxa whisper --to ADDRESS --asset USDC --amount AMOUNT</code></pre>
       </div>
+    </div>
+  </section>
+  <section class="band" id="questions" style="padding-top:20px">
+    <div class="wrap">
+      <h2>Questions, in a low voice</h2>
+      <div class="faq">
+        <details><summary>Where is the proof made?</summary><p>In the browser, beside the note. A relayer is meant to receive a finished proof, not the secret.</p></details>
+        <details><summary>Which chains?</summary><p>Robinhood Chain, Base, Arbitrum, and BNB Chain for the pool. Solana and Ethereum are far shores for Crossing, not homes for the pool.</p></details>
+        <details><summary>Where is the $NYXA address?</summary><p>It will be announced only on official channels. Until then the token page stays quiet.</p></details>
+        <details><summary>What is the terminal showing?</summary><p>Public chain data: block numbers, gas, and recent transaction hashes from Robinhood Chain, Base, Arbitrum, and BNB Chain. Those are not Nyxa payments.</p></details>
+        <details><summary>Has there been an audit?</summary><p>Audit is phase two of the roadmap. It has not begun.</p></details>
+      </div>
+      <p class="related"><a href="/faq.html">All questions</a><a href="/roadmap.html">Roadmap</a></p>
+    </div>
+  </section>
+  <section class="band close-band" style="padding-top:12px">
+    <div class="wrap">
+      <h2>Bring a wallet <em>into the night.</em></h2>
+      <p class="section-lead">The app reads your address, your network, and the native balance. The rites open with testnet.</p>
+      <div class="actions"><a class="btn btn-moon" href="/app/">Launch App</a></div>
     </div>
   </section>`;
 }
@@ -663,7 +748,16 @@ const app = `<section class="app-hero sky" data-starfield>
     <p class="lede">Nyxa reads your address, your network, and the native balance. The rites open with testnet.</p>
   </div>
 </section>
-<section class="band" style="padding-top:28px">
+<section class="band" style="padding-top:8px;padding-bottom:8px">
+  <div class="wrap">
+    <p class="feed-kicker">Live network feed — public chain data</p>
+    <div class="term term-compact" data-feed data-feed-compact>
+      <div class="term-top"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>public rpc</span></div>
+      <div class="term-screen" data-feed-screen role="log" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+<section class="band" style="padding-top:18px">
   <div class="wrap app-shell">
     <aside class="wallet-panel panel">
       <p id="wallet-error" class="alert" role="alert" hidden></p>
