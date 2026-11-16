@@ -10,7 +10,7 @@ Nyxa is in development. The tagline is “Pay in the dark. Leave no trace.” Th
 - The app at `/app/` can connect an EIP-1193 wallet (MetaMask, Rabby, OKX Wallet, and other injected wallets) and read the **real** account, network, and native balance. Veil, Whisper, Eclipse, and Crossing forms validate input. Their buttons stay disabled and read **Launching soon**. The page does not submit a transaction.
 - **$NYXA** is not launched. No contract address is published here. The address will be announced only on official channels.
 - No audit is claimed.
-- There is no official X account. The only profile linked from the site is the GitHub repository in the footer: [github.com/nyxaagent-max/nyxa](https://github.com/nyxaagent-max/nyxa).
+- The official X account is [@nyxanetwork](https://x.com/nyxanetwork). It is linked in the footer, next to the GitHub repository [github.com/nyxaagent-max/nyxa](https://github.com/nyxaagent-max/nyxa).
 
 The site does not show invented balances, totals, user counts, testimonials, partners, or transactions. Diagrams are labelled as illustrations of how the flow is planned to work.
 

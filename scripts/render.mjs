@@ -150,7 +150,13 @@ function footer() {
     </div>
     <div class="footer-bar">
       <p>© 2026 Nyxa Network. Nyxa Network is in development. Contracts are not yet deployed.</p>
-      <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" rel="noopener noreferrer">GitHub</a>
+      <div class="footer-social">
+        <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="x-link" href="https://x.com/nyxanetwork" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.3 7.1 14.6 1.2h-1.3L8.8 6.2 5.2 1.2H1.1l5.5 8L1.1 14.8h1.3l4.8-5.3 3.8 5.3h4.1L9.3 7.1Zm-1.7 1.9-.6-.8-4.5-6.2h1.9l3.6 5 .6.8 4.7 6.5h-1.9l-3.8-5.3Z"/></svg>
+          @nyxanetwork
+        </a>
+      </div>
     </div>
   </div>
 </footer>`;
@@ -693,7 +699,7 @@ const faqs = [
   ["Who holds the secret?", "You do. Nyxa is built to never keep it. Dawn is a way back through your own wallet, not a spare kept by anyone else."],
   ["What does a relayer see?", "The payment it agrees to carry, including the destination. Others are meant to see the arrival, not which note it came from."],
   ["Does the dark hide everything?", "No. Recipients see what arrives. Relayers see what they send. Amounts and timing remain. The missing piece is the public link between a deposit and a later payment."],
-  ["Is there an official social account?", "Not yet. No X account. The only profile on this site is GitHub, in the footer."],
+  ["Is there an official social account?", "Yes. @nyxanetwork is linked in the footer, next to GitHub."],
   ["Someone sent me a contract address.", "It is not ours. $NYXA has no address until we announce one on official channels."],
 ];
 
@@ -731,7 +737,7 @@ const token = `<section class="page-hero sky" data-starfield>
       <p>When the address exists, it will be written here, and only an official channel will speak it first.</p>
     </div>
     <div class="warning">
-      <p><strong>A stranger’s address is not ours.</strong> Ignore addresses offered in a reply, an ad, or a direct message. There is no public X account to “confirm” one. GitHub, in the footer, is the only profile linked from this site.</p>
+      <p><strong>A stranger’s address is not ours.</strong> Ignore addresses offered in a reply, an ad, or a direct message. The official account is @nyxanetwork, linked in the footer.</p>
     </div>
   </div>
 </section>`;

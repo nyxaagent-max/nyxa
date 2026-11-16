@@ -436,7 +436,25 @@ input, select {
   display: flex; justify-content: space-between; gap: 12px; align-items: center;
   padding-top: 14px; border-top: 1px solid #161616; color: var(--muted); font-size: 0.92rem;
 }
-.github-link { margin-left: auto; color: #fff; font-weight: 600; text-decoration: none; }
+.footer-social {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.github-link { color: #fff; font-weight: 600; text-decoration: none; }
+.x-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-weight: 560;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+.x-link svg { width: 13px; height: 13px; flex: 0 0 auto; }
+.x-link:hover, .github-link:hover { color: var(--accent); }
 .noscript-banner { background: #1a1624; color: #eee; text-align: center; padding: 8px 12px; }
 
 .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
