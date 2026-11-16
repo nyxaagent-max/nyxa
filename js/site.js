@@ -277,10 +277,38 @@
     window.addEventListener("resize", place);
   }
 
+  function setupCopy() {
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      const original = button.textContent;
+      button.addEventListener("click", async () => {
+        const value = button.getAttribute("data-copy") || "";
+        try {
+          await navigator.clipboard.writeText(value);
+          button.textContent = "Copied";
+          button.classList.add("is-copied");
+        } catch (err) {
+          const field = document.createElement("input");
+          field.value = value;
+          document.body.append(field);
+          field.select();
+          document.execCommand("copy");
+          field.remove();
+          button.textContent = "Copied";
+          button.classList.add("is-copied");
+        }
+        window.setTimeout(() => {
+          button.textContent = original;
+          button.classList.remove("is-copied");
+        }, 1600);
+      });
+    });
+  }
+
   document.querySelectorAll("[data-starfield]").forEach(setupStarfield);
   document.querySelectorAll("[data-flow]").forEach(setupSequence);
   setupNav();
   setupProgress();
   setupReveal();
   setupTypewriter();
+  setupCopy();
 })();

@@ -6,9 +6,9 @@ Nyxa is in development. The tagline is “Pay in the dark. Leave no trace.” Th
 
 ## Status
 
-- Smart contracts are **not deployed**.
+- Privacy pool contracts are **not deployed**.
 - The app at `/app/` can connect an EIP-1193 wallet (MetaMask, Rabby, OKX Wallet, and other injected wallets) and read the **real** account, network, and native balance. Veil, Whisper, Eclipse, and Crossing forms validate input. Their buttons stay disabled and read **Launching soon**. The page does not submit a transaction.
-- **$NYXA** is not launched. No contract address is published here. The address will be announced only on official channels.
+- **$NYXA** is deployed on Robinhood Chain (chain id 4663). The contract name is NYXA NETWORK and the symbol is NYXA. Contract address: `0xfabf7473d2847e7a8c650851b64737d15505cf0c`. Explorer: [robinhoodchain.blockscout.com](https://robinhoodchain.blockscout.com/address/0xfabf7473d2847e7a8c650851b64737d15505cf0c). No code for this address was found on Base, Arbitrum, or BNB Chain.
 - No audit is claimed.
 - The official X account is [@nyxanetwork](https://x.com/nyxanetwork). It is linked in the footer, next to the GitHub repository [github.com/nyxaagent-max/nyxa](https://github.com/nyxaagent-max/nyxa).
 

@@ -3,6 +3,17 @@ import { dirname, join } from "node:path";
 
 const root = join(import.meta.dirname, "..");
 const BRAND = "Nyxa Network";
+const CA = "0xfabf7473d2847e7a8c650851b64737d15505cf0c";
+const CA_URL = "https://robinhoodchain.blockscout.com/address/" + CA;
+
+function caStrip(extra = "") {
+  return `<div class="ca-strip${extra ? " " + extra : ""}">
+    <span class="ca-kicker">$NYXA · Robinhood Chain</span>
+    <code class="ca-addr">${CA}</code>
+    <button type="button" class="ca-copy" data-copy="${CA}">Copy</button>
+    <a class="ca-explorer" href="${CA_URL}" target="_blank" rel="noopener noreferrer">Explorer</a>
+  </div>`;
+}
 
 const NAV = [
   ["/", "Home"],
@@ -84,7 +95,7 @@ const PROTOCOL = [
   ["/roadmap.html", "Roadmap", "roadmap", "Four phases, from this website to mainnet."],
   ["/builders.html", "Builders", "builders", "A CLI and API for AI agents."],
   ["/learn.html", "Learn", "learn", "The path, the craft, and the questions."],
-  ["/token.html", "$NYXA", "token", "The mark. The address comes on official channels."],
+  ["/token.html", "$NYXA", "token", "NYXA NETWORK on Robinhood Chain."],
 ];
 
 function header(current) {
@@ -148,8 +159,9 @@ function footer() {
         </ul>
       </div>
     </div>
+    ${caStrip("footer-ca")}
     <div class="footer-bar">
-      <p>© 2026 Nyxa Network. Nyxa Network is in development. Contracts are not yet deployed.</p>
+      <p>© 2026 Nyxa Network. Privacy pool contracts are in development and are not yet deployed.</p>
       <div class="footer-social">
         <a class="github-link" href="https://github.com/nyxaagent-max/nyxa" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="x-link" href="https://x.com/nyxanetwork" target="_blank" rel="noopener noreferrer">
@@ -248,6 +260,7 @@ function home() {
             <a class="btn btn-moon" href="/app/">Launch App</a>
             <a class="btn btn-ghost" href="/learn.html">Learn the night</a>
           </div>
+          ${caStrip("hero-ca")}
         </div>
       </div>
       <ul class="chips">
@@ -380,7 +393,7 @@ nyxa whisper --to ADDRESS --asset USDC --amount AMOUNT</code></pre>
       <div class="faq">
         <details><summary>Where is the proof made?</summary><p>In the browser, beside the note. A relayer is meant to receive a finished proof, not the secret.</p></details>
         <details><summary>Which chains?</summary><p>Robinhood Chain, Base, Arbitrum, and BNB Chain for the pool. Solana and Ethereum are far shores for Crossing, not homes for the pool.</p></details>
-        <details><summary>Where is the $NYXA address?</summary><p>It will be announced only on official channels. Until then the token page stays quiet.</p></details>
+        <details><summary>Where is the $NYXA address?</summary><p>0xfabf7473d2847e7a8c650851b64737d15505cf0c on Robinhood Chain. The token reads NYXA NETWORK, symbol NYXA.</p></details>
         <details><summary>What is the terminal showing?</summary><p>Public chain data: block numbers, gas, and recent transaction hashes from Robinhood Chain, Base, Arbitrum, and BNB Chain. Those are not Nyxa payments.</p></details>
         <details><summary>Has there been an audit?</summary><p>Audit is phase two of the roadmap. It has not begun.</p></details>
       </div>
@@ -642,7 +655,7 @@ const roadmap = `<section class="page-hero sky page-hero-compact" data-starfield
       <li>
         <span class="phase-num">Phase 3</span>
         <h2>Mainnet</h2>
-        <p>The pools open on the chains named under Network. $NYXA’s address, if it has one, is announced only on official channels.</p>
+        <p>The pools open on the chains named under Network. $NYXA is already on Robinhood Chain.</p>
       </li>
     </ol>
   </div>
@@ -684,7 +697,7 @@ const docs = `<section class="page-hero sky" data-starfield>
       <li>The fee.</li>
       <li>Who may relay.</li>
       <li>The exact shape of a note.</li>
-      <li>Any contract address.</li>
+      <li>Pool contract addresses.</li>
     </ul>
   </div>
 </section>`;
@@ -692,7 +705,7 @@ const docs = `<section class="page-hero sky" data-starfield>
 const faqs = [
   ["Is Nyxa Network live?", "This website is phase zero. Testnet pools and a relayer are phase one. The order is on the roadmap."],
   ["What does the app do today?", "It connects your wallet and reads the address, the network, and the native balance. The rites wait. The button reads Launching soon."],
-  ["Where is the $NYXA address?", "Announced only on official channels. Until that hour, the token page stays quiet on purpose."],
+  ["Where is the $NYXA address?", "0xfabf7473d2847e7a8c650851b64737d15505cf0c on Robinhood Chain. The contract name is NYXA NETWORK and the symbol is NYXA."],
   ["Has there been an audit?", "Audit is phase two. It has not begun. Nyxa does not name a reviewer, a report, or a date."],
   ["Which assets?", "ETH, USDC, and USDG. The balance in the app is the chain’s own gas token, read from your wallet."],
   ["Which chains?", "Robinhood Chain, Base, Arbitrum, and BNB Chain for the pool. Solana as a destination. Details live on Network."],
@@ -700,7 +713,7 @@ const faqs = [
   ["What does a relayer see?", "The payment it agrees to carry, including the destination. Others are meant to see the arrival, not which note it came from."],
   ["Does the dark hide everything?", "No. Recipients see what arrives. Relayers see what they send. Amounts and timing remain. The missing piece is the public link between a deposit and a later payment."],
   ["Is there an official social account?", "Yes. @nyxanetwork is linked in the footer, next to GitHub."],
-  ["Someone sent me a contract address.", "It is not ours. $NYXA has no address until we announce one on official channels."],
+  ["Someone sent me a contract address.", "Match it to 0xfabf7473d2847e7a8c650851b64737d15505cf0c on Robinhood Chain. Any other address is not $NYXA."],
 ];
 
 const faq = `<section class="page-hero sky" data-starfield>
@@ -724,18 +737,15 @@ const token = `<section class="page-hero sky" data-starfield>
   <div class="wrap">
     <p class="crumb"><a href="/">Nyxa Network</a> / $NYXA</p>
     <p class="pill">In development</p>
-    <h1>A mark, <em>waiting.</em></h1>
-    <p class="lede">$NYXA is the mark of Nyxa Network. Its address will be spoken only on official channels.</p>
+    <h1>The mark <em>is lit.</em></h1>
+    <p class="lede">$NYXA is the token of Nyxa Network. On Robinhood Chain the contract name is NYXA NETWORK and the symbol is NYXA. The privacy pools are still ahead.</p>
   </div>
 </section>
 <section class="band">
   <div class="wrap prose">
     <p class="token-display">$NYXA</p>
-    <div class="ca-blank">
-      <span class="card-kicker">Contract address</span>
-      <strong>Awaiting announcement</strong>
-      <p>When the address exists, it will be written here, and only an official channel will speak it first.</p>
-    </div>
+    ${caStrip()}
+    <p>NYXA NETWORK · symbol NYXA · Robinhood Chain. This is the token. The pool contracts are not deployed yet.</p>
     <div class="warning">
       <p><strong>A stranger’s address is not ours.</strong> Ignore addresses offered in a reply, an ad, or a direct message. The official account is @nyxanetwork, linked in the footer.</p>
     </div>
@@ -909,7 +919,7 @@ const pages = [
   ["roadmap.html", "/roadmap.html", "/roadmap.html", "Roadmap — Nyxa Network", "Nyxa Network roadmap: website, testnet pools and relayer, audit, then mainnet. No dates.", roadmap],
   ["docs.html", "/docs.html", "/docs.html", "The craft — Nyxa Network", "The craft of Nyxa Network: browser proofs, a relayer, Merkle notes, and no custodian.", docs],
   ["faq.html", "/faq.html", "/faq.html", "Questions — Nyxa Network", "Questions about Nyxa Network, answered shortly. The phases are on the roadmap.", faq],
-  ["token.html", "/token.html", "/token.html", "$NYXA — Nyxa Network", "$NYXA is the mark of Nyxa Network. The contract address will be announced only on official channels.", token],
+  ["token.html", "/token.html", "/token.html", "$NYXA — Nyxa Network", "Nyxa Network token $NYXA is NYXA NETWORK on Robinhood Chain at 0xfabf7473d2847e7a8c650851b64737d15505cf0c. Privacy pools are still in development.", token],
   ["app/index.html", "/app/", "/app/", "App — Nyxa Network", "Launch the Nyxa Network app. Connect a wallet and read your real address, network, and native balance.", app],
   ["404.html", "/404.html", "/404.html", "Unlit — Nyxa Network", "That page is not part of Nyxa Network.", missing],
 ];
